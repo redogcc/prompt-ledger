@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "prompt-ledger": {
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/prompt-ledger/adapters/mcp-server.mjs"
+      ],
+      "env": {
+        "PROMPT_LEDGER_DB": "/Users/YOU/.dsh/prompt-ledger/prompt-ledger.sqlite3"
+      }
+    }
+  }
+}

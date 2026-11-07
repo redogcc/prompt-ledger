@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "提示词账本",
+    "description": "自动归档每次提示词、模型、Token、工具、Skill 与 MCP 调用，支持五星复盘、双评闭环、SQLite 本地存储与多维可视化报表。"
+  }
+}

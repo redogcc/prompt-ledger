@@ -1,0 +1,76 @@
+{
+  "name": "@local/prompt-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "提示词账本：DeepSeek Harness 本地提示词全生命周期管理插件，自动采集提示词、模型、Token、工具、Skill/MCP 调用，支持五星复盘、双评闭环、SQLite 审计链与多维报表。",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./ledger": "./ledger.js",
+    "./mcp": "./adapters/mcp-server.mjs",
+    "./cli": "./adapters/cli.mjs",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "ledger.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/*",
+    "adapters/**/*",
+    "skills/**/*"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "meta": {
+      "title": "提示词账本",
+      "description": "自动归档每次提示词、模型、Token、工具、Skill 与 MCP 调用，支持五星复盘、双评闭环、SQLite 本地存储与多维可视化报表。"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-chat"
+      ]
+    }
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "prompt-management",
+    "prompt-ledger",
+    "sqlite",
+    "observability",
+    "evaluation",
+    "mcp"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node scripts/check.mjs",
+    "pack:release": "node scripts/package.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redogcc/prompt-ledger.git"
+  },
+  "homepage": "https://github.com/redogcc/prompt-ledger",
+  "bugs": {
+    "url": "https://github.com/redogcc/prompt-ledger/issues"
+  }
+}

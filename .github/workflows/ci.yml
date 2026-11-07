@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Verify
+        run: npm run check
+      - name: Test
+        run: npm test
+      - name: Build release artifact
+        run: npm run pack:release
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt-ledger-release
+          path: dist/*
+          if-no-files-found: error
