@@ -13,7 +13,7 @@
 
 ## 1.2.0 介绍片
 
-[▶ 观看 42 秒产品介绍片](https://github.com/redogcc/prompt-ledger/releases/download/v1.2.0/prompt-ledger-1.2.0-promo.mp4)
+[▶ 观看 48 秒产品介绍片](https://github.com/redogcc/prompt-ledger/releases/download/v1.2.0/prompt-ledger-1.2.0-promo.mp4)
 
 ![1.2.0 海报](https://github.com/redogcc/prompt-ledger/releases/download/v1.2.0/prompt-ledger-1.2.0-poster.jpg)
 

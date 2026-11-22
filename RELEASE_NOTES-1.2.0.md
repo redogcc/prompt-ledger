@@ -16,7 +16,7 @@
 
 ## 介绍片
 
-- 42 秒 / 1920×1080 / 30fps / H.264 + AAC
+- 48 秒 / 1920×1080 / 30fps / H.264 + AAC
 - 文件：prompt-ledger-1.2.0-promo.mp4
 - 海报：prompt-ledger-1.2.0-poster.jpg
 - 故事板：prompt-ledger-1.2.0-storyboard.jpg
@@ -33,7 +33,7 @@
 
 - npm test：10/10 通过
 - npm run check：通过
-- 视频：42.0s / 1260 帧 / 全片解码通过
+- 视频：48.0s / 1440 帧 / 全片解码通过
 - 干净解压：语法、动作捕获、target 解析、审计链、无数据库/凭据泄漏检查通过
 
 ## 资产清单
