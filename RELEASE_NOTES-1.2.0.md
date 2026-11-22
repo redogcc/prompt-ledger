@@ -19,7 +19,7 @@
 
 - 66 秒 / 1920×1080 / 30fps / H.264 + AAC
 - 文件：prompt-ledger-1.2.0-promo.mp4
-- 含真实产品操作录制 + 界面截图 + 中文旁白
+- 真实产品界面 + 脱敏演示数据 + 中文旁白
 - 海报：prompt-ledger-1.2.0-poster.jpg
 - 故事板：prompt-ledger-1.2.0-storyboard.jpg
 
