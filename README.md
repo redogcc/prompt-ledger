@@ -11,6 +11,14 @@
 
 插件 id：`prompt-ledger` · 包名：`@local/prompt-ledger` · 左侧栏 key：`prompt-ledger` · 数据库：`~/.dsh/prompt-ledger/prompt-ledger.sqlite3`
 
+## 1.2.0 介绍片
+
+[▶ 观看 42 秒产品介绍片](https://github.com/redogcc/prompt-ledger/releases/download/v1.2.0/prompt-ledger-1.2.0-promo.mp4)
+
+![1.2.0 海报](https://github.com/redogcc/prompt-ledger/releases/download/v1.2.0/prompt-ledger-1.2.0-poster.jpg)
+
+完整变更见 [1.2.0 Release Notes](RELEASE_NOTES-1.2.0.md)。视频围绕「结果卡 → 产出物预览 → 完成事项证据 → 会话成果」讲这一版新增的能力。
+
 ---
 
 ## 1. 它解决什么
