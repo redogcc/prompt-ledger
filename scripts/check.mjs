@@ -79,6 +79,7 @@ notes.push(`icon.svg: ${icon.size} bytes`);
 const jsFiles = [
   'index.js',
   'ledger.js',
+  'actions.js',
   'client.js',
   'adapters/cli.mjs',
   'adapters/mcp-server.mjs',
@@ -88,6 +89,8 @@ const jsFiles = [
   'scripts/check.mjs',
   'scripts/package.mjs',
   'test/ledger.test.mjs',
+  'test/actions.test.mjs',
+  'test/backfill.test.mjs',
   'test/client.test.mjs',
 ];
 for (const file of jsFiles) {

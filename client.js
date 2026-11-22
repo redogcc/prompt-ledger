@@ -27,6 +27,56 @@ window.__ModuleLoader__.load({
       'nav.prompts': '提示词',
       'nav.analytics': '效果分析',
       'nav.connect': '接入与设置',
+      'nav.actions': '成果',
+      'actionsMap.title': '本次成果',
+      'actionsMap.subtitle': '这次对话，到底产出了什么、改变了什么',
+      'actionsMap.summaryPrefix': '这段对话，模型',
+      'actionsMap.outputs': '产出物',
+      'actionsMap.changes': '影响文件',
+      'actionsMap.checks': '校验通过',
+      'actionsMap.rounds': '对话回合',
+      'actionsMap.outputsHint': '最终产出',
+      'actionsMap.changesHint': '代码与文件',
+      'actionsMap.checksHint': '自动化验证',
+      'actionsMap.roundsHint': '有动作的回合',
+
+      'actionsMap.session': '会话',
+      'actionsMap.backfill': '补齐历史',
+      'actionsMap.backfilling': '正在补齐…',
+      'actionsMap.backfillDone': '已补齐 {count} 个动作',
+      'actionsMap.backfillNone': '这段会话没有可补齐的动作',
+      'actionsMap.turns': '{count} 轮',
+      'actionsMap.actions': '{count} 个动作',
+      'actionsMap.files': '{count} 个文件',
+      'actionsMap.errors': '{count} 个失败',
+      'actionsMap.empty': '这段会话还没有行动轨迹',
+      'actionsMap.emptyHint': '历史会话可以点「补齐历史」，从会话日志重建。',
+      'actionsMap.noSession': '还没有会话记录',
+      'actionsMap.noSessionHint': '提交一条提示词后，这里会出现会话行动地图。',
+      'actionsMap.clearFilter': '清除文件筛选',
+      'actionsMap.viewTurn': '查看本轮行动',
+      'actionsMap.turn': '第 {turn} 轮',
+      'actionsMap.phaseSee': '查看',
+      'actionsMap.phaseChange': '修改',
+      'actionsMap.phaseRun': '运行',
+      'actionsMap.phaseDeliver': '交付',
+      'actionsMap.phaseSeeHint': '读取 · 搜索 · 图片',
+      'actionsMap.phaseChangeHint': '写入 · 修改',
+      'actionsMap.phaseRunHint': '命令 · 工具',
+      'actionsMap.phaseDeliverHint': '交付文件',
+      'actionsMap.keyActions': '关键动作',
+      'actionsMap.noActions': '这一轮没有可展示的动作',
+      'actionsMap.sessionLabel': '会话 {id}',
+      'actionsMap.lastActivity': '最近 {time}',
+      'actionsMap.fileHint': '点文件可筛选回合',
+      'actionsMap.upgradeTitle': '成果页需要重启 DSH',
+      'actionsMap.upgradeHint': '当前运行的是旧 Host，还没有会话聚合接口。完全退出 DSH 再重新打开（不是刷新页面）后即可加载。',
+      'actionsMap.upgradeStep1': '完全退出 DSH',
+      'actionsMap.upgradeStep2': '重新打开 DSH',
+      'actionsMap.upgradeStep3': '回到「成果」页',
+      'actionsMap.retryCheck': '重新检测',
+
+
       'action.refresh': '刷新',
       'action.export': '导出 CSV',
       'action.retry': '重试',
@@ -121,6 +171,7 @@ window.__ModuleLoader__.load({
       'metric.reasoning': '推理',
       'metric.latency': '耗时',
       'metric.toolCalls': '工具调用',
+      'metric.actions': '动作总数',
       'metric.tools': '工具',
       'metric.errors': '错误',
       'metric.tokens': 'Token',
@@ -240,13 +291,13 @@ window.__ModuleLoader__.load({
       'dock.chainChecking': '校验中',
       'dock.chainSub': 'SHA-256',
       'dock.rated': '{count} 条已评',
+      'dock.recorded': '已归档',
       'dock.skillsMcp': '{skills} Skill · {mcp} MCP',
       'dock.local': '本地 SQLite',
       'dock.openFull': '打开完整账本',
       'dock.close': '收起',
       'dock.tokensSub': '缓存 {rate}%',
       'dock.autoSub': '规则评分',
-      'dock.noData': '提交提示词后自动记录',
       'turn.tail': '提示词账本',
       'turn.detail': '查看复盘',
       'turn.auto': '自动',
@@ -284,6 +335,88 @@ window.__ModuleLoader__.load({
       'detail.hash': '内容哈希',
       'detail.eventChain': '事件链',
       'detail.noEvents': '暂无事件',
+      'actionTrace.title': '这次做了什么',
+      'actionTrace.source': '行动轨迹 · 来自会话事件',
+      'actionTrace.process': '过程与证据',
+      'actionTrace.processTitle': '完整动作时间线',
+      'actionTrace.hint': '按发生顺序还原，可逐条展开核实',
+      'actionTrace.keyHint': '先看关键动作；展开后可查看全部会话事件',
+      'actionTrace.actions': '{count} 个动作',
+      'actionTrace.files': '{count} 个文件',
+      'actionTrace.errors': '{count} 个失败',
+      'actionTrace.summaryPrefix': '这轮模型',
+      'actionTrace.summaryChanged': '修改了 {count} 个文件',
+      'actionTrace.summarySeen': '查看了 {count} 个文件',
+      'actionTrace.summaryRan': '运行了 {count} 条命令',
+      'actionTrace.summaryDelivered': '最后交付了 {count} 个文件',
+      'actionTrace.summaryOther': '执行了 {count} 个动作',
+      'actionTrace.read': '读取了 {count} 个文件',
+      'actionTrace.write': '写入了 {count} 个文件',
+      'actionTrace.edit': '修改了 {count} 个文件',
+      'actionTrace.command': '运行了 {count} 条命令',
+      'actionTrace.search': '查找了 {count} 次',
+      'actionTrace.view': '查看了 {count} 张图片',
+      'actionTrace.deliver': '交付了 {count} 个文件',
+      'actionTrace.web': '联网查了 {count} 次',
+      'actionTrace.skill': '加载了 {count} 个技能',
+      'actionTrace.mcp': '调用了 {count} 个 MCP 工具',
+      'actionTrace.ask': '向你确认了 {count} 次',
+      'actionTrace.plan': '更新了 {count} 次任务清单',
+      'actionTrace.other': '执行了 {count} 个动作',
+      'actionTrace.errorSuffix': '，其中 {count} 个动作失败',
+      'actionTrace.filesTitle': '涉及文件',
+      'actionTrace.all': '全部',
+      'actionTrace.filterFiles': '文件',
+      'actionTrace.filterCommands': '命令',
+      'actionTrace.filterSearch': '搜索',
+      'actionTrace.filterDeliver': '交付',
+      'actionTrace.showAll': '展开全部 {count} 个动作',
+      'actionTrace.showLess': '收起',
+      'actionTrace.evidence': '查看依据',
+      'actionTrace.hideEvidence': '收起依据',
+      'actionTrace.sourceId': '来源',
+      'actionTrace.status.ok': '已完成',
+      'actionTrace.status.error': '失败',
+      'actionTrace.status.running': '进行中',
+      'actionTrace.actionRead': '读取',
+      'actionTrace.actionWrite': '写入',
+      'actionTrace.actionEdit': '修改',
+      'actionTrace.actionView': '查看',
+      'actionTrace.actionSearch': '搜索',
+      'actionTrace.actionDeliver': '交付',
+      'actionTrace.actionOther': '操作',
+      'actionTrace.commandLabel': '命令',
+      'actionTrace.resultLabel': '结果',
+      'actionTrace.errorLabel': '错误',
+      'actionTrace.diffLabel': '改动',
+      'actionTrace.removed': '移除 {count} 行',
+      'actionTrace.added': '新增 {count} 行',
+      'actionTrace.bytes': '{count} 字节',
+      'actionTrace.moreFiles': '还有 {count} 个',
+      'actionTrace.emptyFilter': '这个筛选下没有动作。',
+      'result.eyebrow': '这一轮的结果',
+      'result.delivered': '产出物',
+      'result.changed': '主要变化',
+      'result.verified': '验证',
+      'result.process': '过程',
+      'result.openProcess': '查看过程与证据',
+      'result.closeProcess': '收起过程',
+      'result.modelNote': '模型交付说明',
+      'result.completed': '完成事项',
+      'result.basedOnNote': '来自模型交付说明',
+
+      'result.files': '{count} 个文件',
+      'result.noChanges': '本轮没有文件改动',
+      'result.noChecks': '没有运行自动化校验',
+      'result.checks': '{passed}/{total} 项校验',
+      'result.errors': '{count} 个失败',
+      'result.deliverables': '{count} 个产出',
+      'result.changedFiles': '{count} 个文件',
+      'result.phaseSee': '查看 {count}',
+      'result.phaseChange': '修改 {count}',
+      'result.phaseRun': '运行 {count}',
+      'result.phaseDeliver': '交付 {count}',
+
     };
 
     const EN = {
@@ -293,6 +426,56 @@ window.__ModuleLoader__.load({
       'nav.prompts': 'Prompts',
       'nav.analytics': 'Analytics',
       'nav.connect': 'Connect',
+      'nav.actions': 'Outcomes',
+      'actionsMap.title': 'Session outcomes',
+      'actionsMap.subtitle': 'What this session actually produced and changed.',
+      'actionsMap.summaryPrefix': 'Across this session, the model',
+      'actionsMap.outputs': 'Outputs',
+      'actionsMap.changes': 'Files changed',
+      'actionsMap.checks': 'Checks passed',
+      'actionsMap.rounds': 'Turns',
+      'actionsMap.outputsHint': 'final outputs',
+      'actionsMap.changesHint': 'code & files',
+      'actionsMap.checksHint': 'automated checks',
+      'actionsMap.roundsHint': 'turns with actions',
+
+      'actionsMap.session': 'Session',
+      'actionsMap.backfill': 'Backfill history',
+      'actionsMap.backfilling': 'Backfilling…',
+      'actionsMap.backfillDone': 'Added {count} actions',
+      'actionsMap.backfillNone': 'No historical actions to add',
+      'actionsMap.turns': '{count} turns',
+      'actionsMap.actions': '{count} actions',
+      'actionsMap.files': '{count} files',
+      'actionsMap.errors': '{count} failed',
+      'actionsMap.empty': 'No action trace for this session yet',
+      'actionsMap.emptyHint': 'For a historical session, use “Backfill history” to rebuild it from the session log.',
+      'actionsMap.noSession': 'No sessions yet',
+      'actionsMap.noSessionHint': 'Submit a prompt, then the session action map appears here.',
+      'actionsMap.clearFilter': 'Clear file filter',
+      'actionsMap.viewTurn': 'Open this turn',
+      'actionsMap.turn': 'Turn {turn}',
+      'actionsMap.phaseSee': 'See',
+      'actionsMap.phaseChange': 'Change',
+      'actionsMap.phaseRun': 'Run',
+      'actionsMap.phaseDeliver': 'Deliver',
+      'actionsMap.phaseSeeHint': 'reads · searches · images',
+      'actionsMap.phaseChangeHint': 'writes · edits',
+      'actionsMap.phaseRunHint': 'commands · tools',
+      'actionsMap.phaseDeliverHint': 'delivered files',
+      'actionsMap.keyActions': 'Key actions',
+      'actionsMap.noActions': 'No actions in this turn',
+      'actionsMap.sessionLabel': 'Session {id}',
+      'actionsMap.lastActivity': 'Last active {time}',
+      'actionsMap.fileHint': 'Click a file to filter turns',
+      'actionsMap.upgradeTitle': 'Restart DSH to enable Outcomes',
+      'actionsMap.upgradeHint': 'The running Host does not expose the session outcome API yet. Fully quit and reopen DSH; a page refresh is not enough.',
+      'actionsMap.upgradeStep1': 'Quit DSH completely',
+      'actionsMap.upgradeStep2': 'Reopen DSH',
+      'actionsMap.upgradeStep3': 'Return to Outcomes',
+      'actionsMap.retryCheck': 'Check again',
+
+
       'action.refresh': 'Refresh',
       'action.export': 'Export CSV',
       'action.retry': 'Retry',
@@ -387,6 +570,7 @@ window.__ModuleLoader__.load({
       'metric.reasoning': 'Reasoning',
       'metric.latency': 'Latency',
       'metric.toolCalls': 'Tool calls',
+      'metric.actions': 'Actions',
       'metric.tools': 'tools',
       'metric.errors': 'Errors',
       'metric.tokens': 'Tokens',
@@ -506,13 +690,13 @@ window.__ModuleLoader__.load({
       'dock.chainChecking': 'Checking',
       'dock.chainSub': 'SHA-256',
       'dock.rated': '{count} rated',
+      'dock.recorded': 'recorded',
       'dock.skillsMcp': '{skills} Skills · {mcp} MCP',
       'dock.local': 'Local SQLite',
       'dock.openFull': 'Open full ledger',
       'dock.close': 'Collapse',
       'dock.tokensSub': 'Cache {rate}%',
       'dock.autoSub': 'rule score',
-      'dock.noData': 'Captured automatically after you send',
       'turn.tail': 'Prompt ledger',
       'turn.detail': 'Review',
       'turn.auto': 'Auto',
@@ -550,6 +734,88 @@ window.__ModuleLoader__.load({
       'detail.hash': 'Content hash',
       'detail.eventChain': 'Event chain',
       'detail.noEvents': 'No events',
+      'actionTrace.title': 'What happened',
+      'actionTrace.source': 'Action trace · from session events',
+      'actionTrace.process': 'Process & evidence',
+      'actionTrace.processTitle': 'Full action timeline',
+      'actionTrace.hint': 'Replayed in order; expand any row to verify.',
+      'actionTrace.keyHint': 'Key actions first; expand to see every event.',
+      'actionTrace.actions': '{count} actions',
+      'actionTrace.files': '{count} files',
+      'actionTrace.errors': '{count} failed',
+      'actionTrace.summaryPrefix': 'This turn, the model',
+      'actionTrace.summaryChanged': 'changed {count} file(s)',
+      'actionTrace.summarySeen': 'looked at {count} file(s)',
+      'actionTrace.summaryRan': 'ran {count} command(s)',
+      'actionTrace.summaryDelivered': 'and delivered {count} file(s)',
+      'actionTrace.summaryOther': 'performed {count} action(s)',
+      'actionTrace.read': 'read {count} file(s)',
+      'actionTrace.write': 'wrote {count} file(s)',
+      'actionTrace.edit': 'edited {count} file(s)',
+      'actionTrace.command': 'ran {count} command(s)',
+      'actionTrace.search': 'searched {count} time(s)',
+      'actionTrace.view': 'viewed {count} image(s)',
+      'actionTrace.deliver': 'delivered {count} file(s)',
+      'actionTrace.web': 'searched the web {count} time(s)',
+      'actionTrace.skill': 'loaded {count} skill(s)',
+      'actionTrace.mcp': 'called {count} MCP tool(s)',
+      'actionTrace.ask': 'asked you {count} time(s)',
+      'actionTrace.plan': 'updated the plan {count} time(s)',
+      'actionTrace.other': 'performed {count} action(s)',
+      'actionTrace.errorSuffix': ', with {count} failed.',
+      'actionTrace.filesTitle': 'Files touched',
+      'actionTrace.all': 'All',
+      'actionTrace.filterFiles': 'Files',
+      'actionTrace.filterCommands': 'Commands',
+      'actionTrace.filterSearch': 'Search',
+      'actionTrace.filterDeliver': 'Delivered',
+      'actionTrace.showAll': 'Show all {count} actions',
+      'actionTrace.showLess': 'Show less',
+      'actionTrace.evidence': 'View evidence',
+      'actionTrace.hideEvidence': 'Hide evidence',
+      'actionTrace.sourceId': 'Source',
+      'actionTrace.status.ok': 'Done',
+      'actionTrace.status.error': 'Failed',
+      'actionTrace.status.running': 'Running',
+      'actionTrace.actionRead': 'read',
+      'actionTrace.actionWrite': 'write',
+      'actionTrace.actionEdit': 'edit',
+      'actionTrace.actionView': 'view',
+      'actionTrace.actionSearch': 'search',
+      'actionTrace.actionDeliver': 'deliver',
+      'actionTrace.actionOther': 'action',
+      'actionTrace.commandLabel': 'Command',
+      'actionTrace.resultLabel': 'Result',
+      'actionTrace.errorLabel': 'Error',
+      'actionTrace.diffLabel': 'Diff',
+      'actionTrace.removed': '−{count} lines',
+      'actionTrace.added': '+{count} lines',
+      'actionTrace.bytes': '{count} bytes',
+      'actionTrace.moreFiles': '+{count} more',
+      'actionTrace.emptyFilter': 'No actions in this filter.',
+      'result.eyebrow': 'Result of this turn',
+      'result.delivered': 'Outputs',
+      'result.changed': 'What changed',
+      'result.verified': 'Verification',
+      'result.process': 'Process',
+      'result.openProcess': 'View process & evidence',
+      'result.closeProcess': 'Hide process',
+      'result.modelNote': 'Model delivery note',
+      'result.completed': 'Completed',
+      'result.basedOnNote': 'from the model delivery note',
+
+      'result.files': '{count} file(s)',
+      'result.noChanges': 'No file changes this turn',
+      'result.noChecks': 'No automated checks were run',
+      'result.checks': '{passed}/{total} checks',
+      'result.errors': '{count} failed',
+      'result.deliverables': '{count} output(s)',
+      'result.changedFiles': '{count} file(s)',
+      'result.phaseSee': 'See {count}',
+      'result.phaseChange': 'Change {count}',
+      'result.phaseRun': 'Run {count}',
+      'result.phaseDeliver': 'Deliver {count}',
+
     };
 
     function interpolate(template, values) {
@@ -844,14 +1110,14 @@ window.__ModuleLoader__.load({
       const id = typeof sessionId === 'string' && sessionId !== '' ? sessionId : session?.id;
       const snap = useSessionPrompts(id);
       const AUTO_KEY = 'prompt-ledger.dock.seen.v3';
-      const [open, setOpen] = useState(() => {
+      const [open, setOpen] = useState(false);
+      const [hint, setHint] = useState(() => {
         try {
           return localStorage.getItem(AUTO_KEY) !== '1';
         } catch {
-          return true;
+          return false;
         }
       });
-      const autoOpened = useRef(false);
       const wrapRef = useRef(null);
       const chain = useLedgerIntegrity(open);
       const markSeen = () => {
@@ -860,23 +1126,12 @@ window.__ModuleLoader__.load({
         } catch {
           /* private mode */
         }
+        setHint(false);
       };
       const collapse = () => {
         setOpen(false);
         markSeen();
       };
-
-      useEffect(() => {
-        if (!open || autoOpened.current) return undefined;
-        autoOpened.current = true;
-        const timer = setTimeout(() => {
-          setOpen(false);
-          markSeen();
-        }, 10_000);
-        return () => clearTimeout(timer);
-        // Only the first install-time reveal is automatic; manual opens persist.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
 
       useEffect(() => {
         if (!open) return undefined;
@@ -895,6 +1150,7 @@ window.__ModuleLoader__.load({
       }, [open]);
 
       const items = Array.isArray(snap?.items) ? snap.items : [];
+      if (items.length === 0) return null;
       const ready = snap !== null && snap?.loading !== true;
       const tokens = items.reduce((sum, item) => sum + Number(item.tokens?.total ?? 0), 0);
       const inputTokens = items.reduce((sum, item) => sum + Number(item.tokens?.input ?? 0), 0);
@@ -920,142 +1176,153 @@ window.__ModuleLoader__.load({
           ? t('dock.chainOk')
           : t('dock.chainBad');
       const chainTone = chain === null ? 'loading' : chain.ok === true ? 'success' : 'error';
+      const cacheLabel = interpolate(t('dock.tokensSub'), { rate: cacheRate });
+      const ratedLabel = interpolate(t('dock.rated'), { count: rated.length });
+      const countLabel = interpolate(t('dock.promptUnit'), { count: items.length });
+      const footerNote = `${t('dock.local')} · ${t('dock.chainSub')}`;
+      const openTab = (tab, promptId = null) => {
+        markSeen();
+        setOpen(false);
+        openLedger(ctx, promptId, tab);
+      };
 
-      const modules = [
+      const stats = [
         {
           key: 'prompts',
-          icon: h(PanelIcon, { size: 17, active: true }),
           label: t('dock.promptLabel'),
           value: ready ? String(items.length) : '—',
-          sub: t('dock.session'),
-          tone: 'brand',
+          sub: t('dock.recorded'),
           target: 'prompts',
         },
         {
-          key: 'tokens',
-          icon: h(DatabaseIcon, { size: 17 }),
-          label: t('dock.tokenLabel'),
-          value: ready ? formatTokens(tokens) : '—',
-          sub: interpolate(t('dock.tokensSub'), { rate: cacheRate }),
-          tone: 'plain',
-          target: 'analytics',
-        },
-        {
           key: 'tools',
-          icon: h(ToolIcon, { size: 17 }),
-          label: t('dock.toolsLabel'),
+          label: t('dock.row.tools'),
           value: ready ? String(toolCalls) : '—',
           sub: interpolate(t('dock.skillsMcp'), { skills: skillCount, mcp: mcpCount }),
-          tone: 'plain',
           target: 'analytics',
         },
         {
           key: 'auto',
-          icon: h(SparkIcon, { size: 17 }),
           label: t('dock.autoLabel'),
           value: autoLabel,
           sub: interpolate(t('dock.rated'), { count: autoRated.length }),
-          tone: 'brand',
           target: 'analytics',
         },
-        {
-          key: 'human',
-          icon: h(StarIcon, { size: 17, filled: true }),
-          label: t('dock.humanLabel'),
-          value: humanLabel,
-          sub: interpolate(t('dock.rated'), { count: rated.length }),
-          tone: 'warm',
-          target: 'prompts',
-        },
-        {
-          key: 'chain',
-          icon: h(ShieldIcon, { size: 17 }),
-          label: t('dock.chainLabel'),
-          value: chainLabel,
-          sub: t('dock.chainSub'),
-          tone: chainTone,
-          target: 'connect',
-        },
       ];
-
-      const pillStats = items.length === 0
-        ? h('span', { className: 'pl-ledger-pill-empty' }, t('dock.noData'))
-        : h(React.Fragment, null,
-          h('span', { className: 'pl-ledger-pill-stat' }, `${items.length} ${t('dock.promptLabel')}`),
-          h('span', { className: 'pl-ledger-pill-sep' }),
-          h('span', { className: 'pl-ledger-pill-stat is-tokens' }, formatTokens(tokens)),
-          h('span', { className: 'pl-ledger-pill-sep' }),
-          h('span', { className: 'pl-ledger-pill-stat is-warm' }, humanLabel));
 
       return h('div', { className: 'pl-ledger-center', ref: wrapRef },
         open
           ? h('div', {
-            className: 'pl-ledger-panel',
+            className: 'pl-dock-panel',
             role: 'dialog',
             'aria-label': t('panel.title'),
             onClick: (event) => event.stopPropagation(),
           },
-          h('div', { className: 'pl-ledger-head' },
-            h('span', { className: 'pl-ledger-mark' }, h(PanelIcon, { size: 19, active: true })),
-            h('span', { className: 'pl-ledger-title' },
+          h('div', { className: 'pl-dock-head' },
+            h('span', { className: 'pl-dock-head-mark' }, h(PanelIcon, { size: 18, active: true })),
+            h('span', { className: 'pl-dock-heading' },
               h('strong', null, t('panel.title')),
-              h('span', null, `${t('dock.session')} · ${t('dock.local')}`)),
-            h('span', { className: `pl-ledger-chain is-${chainTone}` },
-              h('span', { className: 'pl-ledger-chain-dot' }),
-              chainLabel),
+              h('span', null, `${t('dock.session')} · ${countLabel}`)),
+            h('span', {
+              className: `pl-dock-chain is-${chainTone}`,
+              title: `${t('dock.chainLabel')} · ${t('dock.chainSub')}`,
+            },
+            h('span', { className: 'pl-dock-chain-dot' }),
+            chainLabel),
             h('button', {
               type: 'button',
-              className: 'pl-ledger-close',
+              className: 'pl-dock-close',
               onClick: collapse,
               title: t('dock.close'),
               'aria-label': t('dock.close'),
             }, h(CloseIcon, { size: 13 }))),
 
-          h('div', { className: 'pl-ledger-grid' },
-            modules.map((module) => h('button', {
-              key: module.key,
-              type: 'button',
-              className: `pl-ledger-module is-${module.tone}`,
-              onClick: () => {
-                markSeen();
-                openLedger(ctx, null, module.target);
-              },
-              title: `${module.label} · ${module.value}`,
-            },
-            h('span', { className: 'pl-ledger-module-top' },
-              h('span', { className: 'pl-ledger-module-icon' }, module.icon),
-              h('span', { className: 'pl-ledger-module-label' }, module.label)),
-            h('strong', { className: 'pl-ledger-module-value' }, module.value),
-            h('span', { className: 'pl-ledger-module-sub' }, module.sub)))),
+          h('button', {
+            type: 'button',
+            className: 'pl-dock-hero',
+            onClick: () => openTab('analytics'),
+            title: t('dock.row.tokens'),
+          },
+          h('span', { className: 'pl-dock-hero-top' },
+            h('span', { className: 'pl-dock-hero-label' }, t('dock.row.tokens')),
+            h('span', { className: 'pl-dock-hero-cache' }, cacheLabel)),
+          h('span', { className: 'pl-dock-hero-figure' },
+            h('strong', null, ready ? formatTokens(tokens) : '—'),
+            h('span', { className: 'pl-dock-hero-unit' }, t('dock.tokenShort'))),
+          h('span', { className: 'pl-dock-meter', 'aria-hidden': 'true' },
+            h('span', {
+              className: 'pl-dock-meter-fill',
+              style: { width: `${Math.min(100, Math.max(0, cacheRate))}%` },
+            }))),
 
-          h('div', { className: 'pl-ledger-foot' },
-            h('span', null, 'SQLite · SHA-256 · ', t('common.local')),
+          h('div', { className: 'pl-dock-stats' },
+            stats.map((stat) => h('button', {
+              key: stat.key,
+              type: 'button',
+              className: 'pl-dock-stat',
+              onClick: () => openTab(stat.target),
+              title: `${stat.label} · ${stat.value}`,
+            },
+            h('span', { className: 'pl-dock-stat-label' }, stat.label),
+            h('strong', { className: 'pl-dock-stat-value' }, stat.value),
+            h('span', { className: 'pl-dock-stat-sub' }, stat.sub)))),
+
+          h('button', {
+            type: 'button',
+            className: 'pl-dock-rate',
+            onClick: () => openTab('prompts'),
+            title: t('dock.humanLabel'),
+          },
+          h('span', { className: 'pl-dock-rate-label' }, t('dock.humanLabel')),
+          humanScore === null
+            ? h('span', { className: 'pl-dock-rate-empty' }, t('turn.noRating'))
+            : h(React.Fragment, null,
+              h('span', { className: 'pl-dock-rate-stars' },
+                h(Stars, {
+                  value: Math.round(humanScore),
+                  readOnly: true,
+                  size: 14,
+                  label: `${humanScore.toFixed(1)} / 5`,
+                })),
+              h('span', { className: 'pl-dock-rate-score' }, humanScore.toFixed(1))),
+          h('span', { className: 'pl-dock-rate-count' }, ratedLabel)),
+
+          h('div', { className: 'pl-dock-foot' },
+            h('span', { className: 'pl-dock-foot-note' }, footerNote),
             h('button', {
               type: 'button',
-              className: 'pl-ledger-open',
-              onClick: () => {
-                markSeen();
-                openLedger(ctx, null, 'overview');
-              },
-            }, t('dock.openFull'), h(ChevronIcon, { size: 11 }))))
+              className: 'pl-dock-open',
+              onClick: () => openTab('overview'),
+            }, t('dock.openFull'), h(ArrowRightIcon, { size: 11 }))))
           : null,
 
         h('button', {
           type: 'button',
-          className: `pl-ledger-pill${open ? ' is-open' : ''}`,
+          className: `pl-dock${open ? ' is-open' : ''}`,
           onClick: () => {
-            if (open) collapse();
-            else setOpen(true);
+            if (open) {
+              collapse();
+            } else {
+              markSeen();
+              setOpen(true);
+            }
           },
           'aria-expanded': open ? 'true' : 'false',
           'aria-haspopup': 'dialog',
           title: open ? t('dock.close') : t('dock.open'),
         },
-        h('span', { className: 'pl-ledger-pill-mark' }, h(PanelIcon, { size: 14, active: true })),
-        h('span', { className: 'pl-ledger-pill-title' }, t('panel.title')),
-        h('span', { className: 'pl-ledger-pill-divider' }),
-        pillStats,
-        h('span', { className: 'pl-ledger-chev' }, h(ChevronIcon, { size: 11, open: !open }))));
+        h('span', { className: 'pl-dock-mark' },
+          h(PanelIcon, { size: 14 }),
+          hint ? h('i', { className: 'pl-dock-hint', 'aria-hidden': 'true' }) : null),
+        h('span', { className: 'pl-dock-title' }, t('panel.title')),
+        h('span', { className: 'pl-dock-divider' }),
+        h('span', { className: 'pl-dock-scope' }, t('dock.session')),
+        h('span', { className: 'pl-dock-stat-inline' }, countLabel),
+        h('span', { className: 'pl-dock-dot' }),
+        h('span', { className: 'pl-dock-stat-inline' }, `${formatTokens(tokens)} ${t('dock.tokenShort')}`),
+        h('span', { className: 'pl-dock-dot' }),
+        h('span', { className: `pl-dock-stat-inline${humanScore === null ? '' : ' is-warm'}` }, humanLabel),
+        h('span', { className: 'pl-dock-chev' }, h(ChevronIcon, { size: 11, open }))));
     }
 
     function TurnLedgerMetrics({ ctx, t, sessionId, turn, seq }) {
@@ -1088,34 +1355,50 @@ window.__ModuleLoader__.load({
           setBusy(false);
         }
       };
-      const auto = item.auto?.total;
-      return h('div', { className: 'pl-turn' },
-        h('span', { className: 'pl-turn-title' }, h(PanelIcon, { size: 12, active: true }), t('turn.tail')),
-        h('span', { className: `pl-turn-status is-${item.status ?? 'unknown'}` },
-          h('span', { className: 'pl-turn-dot' }),
-          statusLabel(item.status, t)),
+      const auto = Number(item.auto?.total);
+      const hasAuto = Number.isFinite(auto);
+      const stars = Number(item.rating?.stars);
+      const hasRating = Number.isFinite(stars) && stars > 0;
+      return h('div', { className: 'pl-turn', 'aria-busy': busy ? 'true' : undefined },
+        h('span', { className: 'pl-turn-lead' },
+          h('span', { className: 'pl-turn-mark' }, h(PanelIcon, { size: 12, active: true })),
+          h('span', { className: 'pl-turn-name' }, t('turn.tail')),
+          h('span', { className: `pl-turn-status is-${item.status ?? 'unknown'}` },
+            h('span', { className: 'pl-turn-dot' }),
+            statusLabel(item.status, t))),
+
         h('span', { className: 'pl-turn-meta' },
           h('span', { className: 'pl-turn-model' }, item.model ?? '—'),
-          h('span', { className: 'pl-turn-sep' }, '·'),
-          h('span', null, `${formatTokens(item.tokens?.total)} ${t('dock.tokenShort')}`),
-          h('span', { className: 'pl-turn-sep' }, '·'),
-          h('span', null, `${item.toolCalls ?? 0} ${t('metric.tools')}`),
-          auto === null || auto === undefined
-            ? null
-            : h('span', { className: 'pl-turn-auto' }, `${t('turn.auto')} ${Number(auto).toFixed(1)}`)),
-        h('span', { className: 'pl-turn-rating' },
-          h(Stars, {
-            value: item.rating?.stars ?? 0,
-            size: 11,
-            onRate: rate,
-            label: item.rating?.stars ? t('prompts.humanEval') : t('turn.noRating'),
-          })),
-        error === null ? null : h('span', { className: 'pl-turn-error', title: error }, interpolate(t('turn.ratingError'), { message: error })),
-        h('button', {
-          type: 'button',
-          className: 'pl-turn-detail',
-          onClick: () => openLedger(ctx, item.id),
-        }, t('turn.detail'), h(ChevronIcon, { size: 10 })));
+          h('span', { className: 'pl-turn-sep' }),
+          h('span', null, `${item.toolCalls ?? 0} ${t('metric.tools')}`)),
+
+        h('span', { className: 'pl-turn-actions' },
+          hasAuto
+            ? h('span', { className: 'pl-turn-auto', title: t('dock.autoLabel') },
+              h(SparkIcon, { size: 10 }),
+              h('span', null, t('turn.auto')),
+              h('strong', null, auto.toFixed(1)))
+            : null,
+          h('span', { className: 'pl-turn-rate' },
+            h(Stars, {
+              value: hasRating ? stars : 0,
+              size: 14,
+              onRate: rate,
+              label: hasRating ? t('prompts.humanEval') : t('turn.noRating'),
+            }),
+            hasRating
+              ? h('span', { className: 'pl-turn-score' }, stars.toFixed(1))
+              : h('span', { className: 'pl-turn-hint' }, t('turn.noRating'))),
+          h('span', { className: 'pl-turn-divider' }),
+          h('button', {
+            type: 'button',
+            className: 'pl-turn-detail',
+            onClick: () => openLedger(ctx, item.id),
+          }, t('turn.detail'), h(ArrowRightIcon, { size: 10 }))),
+
+        error === null
+          ? null
+          : h('span', { className: 'pl-turn-error', title: error }, interpolate(t('turn.ratingError'), { message: error })));
     }
 
     /* ------------------------------------------------------------------ */
@@ -1183,6 +1466,16 @@ window.__ModuleLoader__.load({
         stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round',
         style: { display: 'block', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s ease' },
       }, h('path', { d: 'm6 9 6 6 6-6' }));
+    }
+
+    function ArrowRightIcon({ size = 12 }) {
+      return h('svg', {
+        viewBox: '0 0 24 24', width: size, height: size, 'aria-hidden': true, fill: 'none',
+        stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round',
+        style: { display: 'block' },
+      },
+      h('path', { d: 'M5 12h13' }),
+      h('path', { d: 'm13 6 6 6-6 6' }));
     }
 
     function CloseIcon({ size = 15 }) {
@@ -1705,6 +1998,532 @@ window.__ModuleLoader__.load({
         }));
     }
 
+    const ACTION_PATHS = {
+      read: 'M5 3.5h9l5 5V20.5H5z M14 3.5V9h5',
+      write: 'M5 3.5h9l5 5V20.5H5z M14 3.5V9h5 M8 14h8 M8 17h5',
+      edit: 'M4 20l4.5-1 10-10-3.5-3.5-10 10L4 20z M13.5 6l4.5 4.5',
+      command: 'M4 6h16v12H4z M7 10l3 2-3 2 M12.5 14h4',
+      search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M16 16l4 4',
+      deliver: 'M4 8l8-4 8 4v8l-8 4-8-4z M4 8l8 4 8-4 M12 12v8',
+      web: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M3 12h18 M12 3c3 3.5 3 14.5 0 18 M12 3c-3 3.5-3 14.5 0 18',
+      view: 'M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+      skill: 'M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z',
+      mcp: 'M8 12a4 4 0 0 1 4-4h1 M16 12a4 4 0 0 1-4 4h-1 M9 4v4 M15 16v4 M4 9h4 M16 15h4',
+      ask: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7 M12 17h.01',
+      plan: 'M5 5h14 M5 12h14 M5 19h9 M3 5h.01 M3 12h.01 M3 19h.01',
+      other: 'M12 4v16 M4 12h16',
+    };
+
+    function ActionIcon({ kind, size = 15 }) {
+      return h('svg', {
+        viewBox: '0 0 24 24',
+        width: size,
+        height: size,
+        fill: 'none',
+        stroke: 'currentColor',
+        strokeWidth: 1.7,
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        'aria-hidden': true,
+      }, h('path', { d: ACTION_PATHS[kind] ?? ACTION_PATHS.other }));
+    }
+
+    function actionTitle(action, zh) {
+      if (!action) return '';
+      return zh ? (action.titleZh || action.titleEn || '') : (action.titleEn || action.titleZh || '');
+    }
+
+    function actionStatusText(status, t) {
+      if (status === 'error') return t('actionTrace.status.error');
+      if (status === 'running') return t('actionTrace.status.running');
+      return t('actionTrace.status.ok');
+    }
+
+    function actionLabel(action, t) {
+      if (!action) return t('actionTrace.actionOther');
+      const key = action.kind === 'read' ? 'actionRead'
+        : action.kind === 'write' ? 'actionWrite'
+          : action.kind === 'edit' ? 'actionEdit'
+            : action.kind === 'view' ? 'actionView'
+              : action.kind === 'search' ? 'actionSearch'
+                : action.kind === 'deliver' ? 'actionDeliver'
+                  : 'actionOther';
+      return t('actionTrace.' + key);
+    }
+
+    function actionSummaryLine(summary, t, zh, prefix) {
+      const changed = (Number(summary?.edit) || 0) + (Number(summary?.write) || 0);
+      const seen = (Number(summary?.read) || 0) + (Number(summary?.view) || 0) + (Number(summary?.search) || 0);
+      const ran = Number(summary?.command) || 0;
+      const delivered = Number(summary?.deliver) || 0;
+      const errors = Number(summary?.errors) || 0;
+      const total = Number(summary?.total) || 0;
+      const clauses = [];
+      if (changed > 0) clauses.push(interpolate(t('actionTrace.summaryChanged'), { count: changed }));
+      else if (seen > 0) clauses.push(interpolate(t('actionTrace.summarySeen'), { count: seen }));
+      if (ran > 0) clauses.push(interpolate(t('actionTrace.summaryRan'), { count: ran }));
+      if (delivered > 0) clauses.push(interpolate(t('actionTrace.summaryDelivered'), { count: delivered }));
+      if (clauses.length === 0) clauses.push(interpolate(t('actionTrace.summaryOther'), { count: total }));
+      let text = (prefix || t('actionTrace.summaryPrefix')) + clauses.join(zh ? '，' : ', ') + (zh ? '。' : '.');
+      if (errors > 0) text += interpolate(t('actionTrace.errorSuffix'), { count: errors });
+      return text;
+    }
+
+    function fileTypeInfo(path, zh) {
+      const ext = String(path ?? '').split('.').pop().toLowerCase();
+      if (['mp4', 'mov', 'webm', 'mkv', 'avi'].includes(ext)) return { key: 'video', label: zh ? '视频' : 'Video', icon: 'deliver' };
+      if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext)) return { key: 'image', label: zh ? '图片' : 'Image', icon: 'view' };
+      if (['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext)) return { key: 'doc', label: zh ? '文档' : 'Document', icon: 'read' };
+      if (['md', 'txt', 'csv', 'json', 'yaml', 'yml'].includes(ext)) return { key: 'data', label: zh ? '文档' : 'Document', icon: 'read' };
+      if (['js', 'mjs', 'ts', 'tsx', 'jsx', 'html', 'css', 'py', 'go', 'rs', 'java', 'sh'].includes(ext)) return { key: 'code', label: zh ? '代码' : 'Code', icon: 'edit' };
+      return { key: 'file', label: zh ? '文件' : 'File', icon: 'read' };
+    }
+
+    function resultNarrative(value) {
+      let text = String(value ?? '');
+      if (text === '') return '';
+      const fence = String.fromCharCode(96).repeat(3);
+      text = text.split(fence)[0];
+      const lines = text.split(String.fromCharCode(10)).map((line) => line.trim())
+        .filter((line) => line !== '')
+        .filter((line) => !line.startsWith('#'));
+      const first = lines.find((line) => line.length >= 18) ?? lines[0] ?? '';
+      return truncate(first.replace(/[ \t]+/g, ' '), 180);
+    }
+
+    function isVerificationAction(action) {
+      const command = String(action?.detail?.command ?? '').toLowerCase();
+      const description = String(action?.detail?.description ?? '').toLowerCase();
+      if (command === '' && description === '') return false;
+      if (command.includes('wait') || command.includes('sleep') || command.includes('background') || command.includes('approval')) return false;
+      const verification = /npm (test|run check|run lint|run build)|node --test|tsc|pytest|vitest|jest|go test|cargo test|eslint|prettier --check/;
+      if (command !== '') return verification.test(command);
+      return /(test|check|lint|build|verify|tsc|pytest|vitest|jest)/.test(description);
+    }
+
+    function extractResultItems(value, zh) {
+      const text = String(value ?? '');
+      if (text === '') return [];
+      const fence = String.fromCharCode(96).repeat(3);
+      const lines = text.split(String.fromCharCode(10));
+      const items = [];
+      let current = null;
+      let inCode = false;
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (line.startsWith(fence)) {
+          inCode = !inCode;
+          continue;
+        }
+        if (inCode || line === '') continue;
+        const heading = /^(#{2,4})\s+(.+)$/.exec(line);
+        if (heading !== null) {
+          let title = heading[2]
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            .replace(/^[一二三四五六七八九十\d]+[、.．]\s*/, '')
+            .replace(/[*]/g, '')
+            .trim();
+          title = title.split(String.fromCharCode(96)).join('');
+          if (title.length > 56) title = title.slice(0, 55) + '…';
+          const skip = /^(下一步|后续|总结|结论|说明|附|附录|风险|参考|背景)/.test(title);
+          current = skip || title === '' ? null : { title, detail: '' };
+          if (current !== null) items.push(current);
+          continue;
+        }
+        if (current === null) continue;
+        if (line.startsWith('|') || line.startsWith('---') || /^[-*]\s*$/.test(line)) continue;
+        const cleaned = line
+          .replace(/^[-*]\s+/, '')
+          .replace(/^\d+\.\s+/, '')
+          .replace(/^>\s*/, '')
+          .replace(/[*]/g, '')
+          .trim();
+        const plain = cleaned.split(String.fromCharCode(96)).join('');
+        if (plain !== '' && current.detail === '') current.detail = plain.length > 110 ? plain.slice(0, 109) + '…' : plain;
+        if (items.length >= 4) break;
+      }
+      return items.filter((item) => item.title !== '').slice(0, 4);
+    }
+
+    function buildOutcome(actions, response, zh, scope = 'turn') {
+      const list = Array.isArray(actions) ? actions : [];
+      const deliverables = new Map();
+      const changes = new Map();
+      const verifications = new Map();
+      let errors = 0;
+      for (const action of list) {
+        if (action.status === 'error') errors += 1;
+        const targets = Array.isArray(action.targets) ? action.targets : [];
+        if (action.kind === 'deliver' && action.status !== 'error') {
+          const detailFiles = Array.isArray(action.detail?.files) ? action.detail.files : [];
+          for (const target of targets) {
+            const description = detailFiles.find((file) => file.path === target.path)?.description ?? '';
+            deliverables.set(target.path, {
+              ...fileTypeInfo(target.path, zh),
+              path: target.path,
+              label: target.label || target.path.split('/').pop() || target.path,
+              description,
+              explicit: true,
+            });
+          }
+        }
+        if (action.kind === 'write' && action.status !== 'error') {
+          for (const target of targets) {
+            if (deliverables.has(target.path)) continue;
+            deliverables.set(target.path, {
+              ...fileTypeInfo(target.path, zh),
+              path: target.path,
+              label: target.label || target.path.split('/').pop() || target.path,
+              description: Number(action.detail?.lines) > 0 ? (Number(action.detail.lines) + ' 行新内容') : '',
+              explicit: false,
+            });
+          }
+        }
+        if (action.kind === 'edit' || action.kind === 'write') {
+          for (const target of targets) {
+            const current = changes.get(target.path) ?? {
+              path: target.path,
+              label: target.label || target.path,
+              added: 0,
+              removed: 0,
+              edits: 0,
+              writes: 0,
+              bytes: 0,
+            };
+            if (action.kind === 'edit') {
+              current.edits += 1;
+              current.added += Number(action.detail?.added) || 0;
+              current.removed += Number(action.detail?.removed) || 0;
+            } else {
+              current.writes += 1;
+              current.added += Number(action.detail?.lines) || 0;
+              current.bytes += Number(action.detail?.bytes) || 0;
+            }
+            changes.set(target.path, current);
+          }
+        }
+        if (action.kind === 'command' && isVerificationAction(action)) {
+          const label = action.detail?.description || action.detail?.command?.split(String.fromCharCode(10))[0] || action.titleZh || 'check';
+          const key = truncate(String(label).replace(/[ \t]+/g, ' '), 90);
+          const previous = verifications.get(key);
+          const ok = action.status !== 'error';
+          verifications.set(key, { label: key, status: previous?.status === 'error' ? 'error' : (ok ? 'ok' : 'error') });
+        }
+      }
+      const changeList = [...changes.values()].map((file) => ({ ...file, total: file.added + file.removed })).sort((a, b) => b.total - a.total);
+      const deliverList = [...deliverables.values()];
+      const checkList = [...verifications.values()];
+      const passed = checkList.filter((check) => check.status !== 'error').length;
+      const groupsMap = new Map();
+      for (const file of changeList) {
+        const clean = String(file.label || file.path).replace(/^\/+/, '').replace(/^\.\//, '');
+        const name = clean.includes('/') ? clean.split('/')[0] : (zh ? '项目根目录' : 'Project root');
+        const group = groupsMap.get(name) ?? { name, files: 0, added: 0, removed: 0, top: [] };
+        group.files += 1;
+        group.added += file.added;
+        group.removed += file.removed;
+        group.top.push(file);
+        groupsMap.set(name, group);
+      }
+      const groups = [...groupsMap.values()].map((group) => ({
+        ...group,
+        top: group.top.sort((a, b) => (b.added + b.removed) - (a.added + a.removed)).slice(0, 3),
+      })).sort((a, b) => (b.added + b.removed) - (a.added + a.removed));
+      const parts = [];
+      if (deliverList.length > 0) parts.push(zh ? '产出 ' + deliverList.length + ' 个文件' : 'produced ' + deliverList.length + ' file(s)');
+      if (changeList.length > 0) parts.push(zh ? '影响 ' + changeList.length + ' 个文件、' + groups.length + ' 个项目' : 'touched ' + changeList.length + ' file(s) in ' + groups.length + ' area(s)');
+      if (checkList.length > 0) parts.push(zh ? passed + '/' + checkList.length + ' 项校验通过' : passed + '/' + checkList.length + ' check(s) passed');
+      if (errors > 0) parts.push(zh ? errors + ' 个动作失败' : errors + ' action(s) failed');
+      const sentence = parts.length > 0
+        ? (zh ? (scope === 'session' ? '整段对话' : '本轮') : (scope === 'session' ? 'This session ' : 'This turn ')) + parts.join(zh ? '，' : ', ') + (zh ? '。' : '.')
+        : (zh ? (scope === 'session' ? '整段对话没有产生文件改动。' : '本轮没有产生文件改动，主要是在查看和运行。') : (scope === 'session' ? 'No file changes in this session.' : 'No file changes this turn; mostly inspection and commands.'));
+      const headline = deliverList.length > 0
+        ? (zh ? '产出了 ' + deliverList.length + ' 个文件' : 'Produced ' + deliverList.length + ' file(s)')
+        : changeList.length > 0
+          ? (zh ? '修改了 ' + changeList.length + ' 个文件' : 'Changed ' + changeList.length + ' file(s)')
+          : checkList.length > 0
+            ? (zh ? '完成 ' + checkList.length + ' 项校验' : 'Ran ' + checkList.length + ' check(s)')
+            : (zh ? '完成本轮任务' : 'Turn completed');
+      return {
+        deliverables: deliverList,
+        changes: changeList,
+        groups,
+        verifications: checkList,
+        checksPassed: passed,
+        checksTotal: checkList.length,
+        errors,
+        headline,
+        sentence,
+        narrative: resultNarrative(response),
+        items: extractResultItems(response, zh),
+      };
+    }
+
+    function ActionEvidence({ action, t, zh }) {
+      const detail = action.detail !== null && typeof action.detail === 'object' ? action.detail : {};
+      const blocks = [];
+      const block = (label, content) => h('div', { className: 'pl-action-evidence-block', key: label },
+        h('span', { className: 'pl-action-evidence-label' }, label),
+        content);
+      if (typeof detail.command === 'string' && detail.command !== '') {
+        blocks.push(block(t('actionTrace.commandLabel'), h('pre', { className: 'pl-action-code' }, detail.command)));
+      }
+      if (typeof detail.pattern === 'string' && detail.pattern !== '') {
+        blocks.push(block(t('actionTrace.filterSearch'), h('code', { className: 'pl-action-pattern' }, detail.pattern)));
+      }
+      if (action.kind === 'edit' && (detail.oldPreview || detail.newPreview)) {
+        const removed = Number(detail.removed) || 0;
+        const added = Number(detail.added) || 0;
+        blocks.push(block(t('actionTrace.diffLabel'), h('div', { className: 'pl-action-diff' },
+          h('div', { className: 'pl-action-diff-head' },
+            removed ? h('span', { className: 'is-removed' }, interpolate(t('actionTrace.removed'), { count: removed })) : null,
+            added ? h('span', { className: 'is-added' }, interpolate(t('actionTrace.added'), { count: added })) : null),
+          detail.oldPreview ? h('pre', { className: 'pl-action-diff-old' }, detail.oldPreview) : null,
+          detail.newPreview ? h('pre', { className: 'pl-action-diff-new' }, detail.newPreview) : null)));
+      }
+      if (action.kind === 'write' && typeof detail.preview === 'string' && detail.preview !== '') {
+        blocks.push(block(t('actionTrace.resultLabel'), h('pre', { className: 'pl-action-code' }, detail.preview)));
+      }
+      if (action.kind === 'deliver' && Array.isArray(detail.files) && detail.files.length > 0) {
+        blocks.push(block(t('actionTrace.filesTitle'), h('div', { className: 'pl-action-evidence-files' },
+          detail.files.map((file, index) => h('div', { className: 'pl-action-evidence-file', key: index },
+            h('span', { className: 'pl-action-evidence-file-path' }, file.path || ''),
+            file.description ? h('span', { className: 'pl-action-evidence-file-desc' }, file.description) : null)))));
+      }
+      if (action.result && action.kind !== 'read' && action.status !== 'error') {
+        blocks.push(block(t('actionTrace.resultLabel'), h('pre', { className: 'pl-action-result' }, truncate(action.result, 700))));
+      }
+      if (action.error) {
+        blocks.push(block(t('actionTrace.errorLabel'), h('pre', { className: 'pl-action-error' }, truncate(action.error, 500))));
+      }
+      blocks.push(h('div', { className: 'pl-action-source', key: 'source' },
+        h('span', null, t('actionTrace.sourceId')),
+        action.callId ? h('code', { title: action.callId }, truncate(action.callId, 22)) : null,
+        action.seq !== null && action.seq !== undefined ? h('span', { className: 'pl-action-source-seq' }, '#' + action.seq) : null,
+        h('code', { className: 'pl-action-source-tool' }, action.name || '')));
+      return h('div', { className: 'pl-action-evidence' }, blocks);
+    }
+
+    function ActionTrace({ prompt, t, zh, compact = false }) {
+      const actions = Array.isArray(prompt.actions) ? prompt.actions : [];
+      const files = Array.isArray(prompt.files) ? prompt.files : [];
+      const summary = prompt.actionSummary !== null && typeof prompt.actionSummary === 'object' ? prompt.actionSummary : {};
+      const [filter, setFilter] = useState('all');
+      const [fileFilter, setFileFilter] = useState(null);
+      const [showAll, setShowAll] = useState(false);
+      const [openId, setOpenId] = useState(null);
+      const [showAllFiles, setShowAllFiles] = useState(false);
+      useEffect(() => {
+        setFilter('all');
+        setFileFilter(null);
+        setShowAll(false);
+        setOpenId(null);
+        setShowAllFiles(false);
+      }, [prompt.id]);
+      if (actions.length === 0) return null;
+
+      const total = Number(summary.total) || actions.length;
+      const fileCount = Number(summary.files) || files.length;
+      const errors = Number(summary.errors) || 0;
+      const summaryText = actionSummaryLine(summary, t, zh);
+
+      const fileKinds = new Set(['read', 'write', 'edit', 'view']);
+      const filtered = actions.filter((action) => {
+        if (fileFilter !== null && !(Array.isArray(action.targets) && action.targets.some((item) => item.path === fileFilter))) return false;
+        if (filter === 'files') return fileKinds.has(action.kind);
+        if (filter === 'commands') return action.kind === 'command';
+        if (filter === 'search') return action.kind === 'search';
+        if (filter === 'deliver') return action.kind === 'deliver';
+        return true;
+      });
+      const keyKinds = new Set(['edit', 'write', 'deliver', 'mcp', 'ask', 'plan']);
+      const keyActions = actions.filter((action) => keyKinds.has(action.kind) || action.status === 'error');
+      const defaultActions = keyActions.length > 0 ? keyActions : filtered;
+      const sourceActions = showAll || filter !== 'all' || fileFilter !== null ? filtered : defaultActions;
+      const shown = showAll ? filtered : sourceActions.slice(0, 6);
+      const fileList = showAllFiles ? files : files.slice(0, 8);
+      const filters = [
+        ['all', t('actionTrace.all')],
+        ['files', t('actionTrace.filterFiles')],
+        ['commands', t('actionTrace.filterCommands')],
+        ['search', t('actionTrace.filterSearch')],
+        ['deliver', t('actionTrace.filterDeliver')],
+      ];
+      const toggleFile = (path) => {
+        setFileFilter((current) => (current === path ? null : path));
+        setShowAll(false);
+        setOpenId(null);
+      };
+
+      return h('div', { className: 'pl-actions' + (compact ? ' is-compact' : '') },
+        h('div', { className: 'pl-actions-head' },
+          h('div', { className: 'pl-actions-heading' },
+            h('div', { className: 'pl-actions-eyebrow' },
+              h('span', { className: 'pl-actions-pulse' }),
+              compact ? t('actionTrace.process') : t('actionTrace.source')),
+            h('h3', null, compact ? t('actionTrace.processTitle') : t('actionTrace.title')),
+            h('p', { className: 'pl-actions-hint' }, showAll || compact ? t('actionTrace.hint') : t('actionTrace.keyHint'))),
+          h('div', { className: 'pl-actions-stats' },
+            h('span', { className: 'pl-actions-stat' }, interpolate(t('actionTrace.actions'), { count: total })),
+            h('span', { className: 'pl-actions-stat' }, interpolate(t('actionTrace.files'), { count: fileCount })),
+            errors > 0 ? h('span', { className: 'pl-actions-stat is-error' }, interpolate(t('actionTrace.errors'), { count: errors })) : null)),
+        compact ? null : h('p', { className: 'pl-actions-summary' }, summaryText),
+        !compact && files.length > 0
+          ? h('div', { className: 'pl-actions-files' },
+            h('span', { className: 'pl-actions-files-label' }, t('actionTrace.filesTitle')),
+            h('div', { className: 'pl-file-chips' },
+              fileList.map((file) => h('button', {
+                key: file.path,
+                type: 'button',
+                className: 'pl-file-chip is-' + file.action + (fileFilter === file.path ? ' is-active' : ''),
+                title: file.path,
+                'aria-pressed': fileFilter === file.path,
+                onClick: () => toggleFile(file.path),
+              },
+              h('span', { className: 'pl-file-chip-dot' }),
+              h('span', { className: 'pl-file-chip-name' }, file.label || file.path),
+              h('span', { className: 'pl-file-chip-action' }, actionLabel({ kind: file.action }, t)),
+              Number(file.count) > 1 ? h('span', { className: 'pl-file-chip-count' }, file.count) : null)),
+              files.length > 8 && !showAllFiles
+                ? h('button', {
+                  type: 'button',
+                  className: 'pl-file-chip is-more',
+                  onClick: () => setShowAllFiles(true),
+                }, interpolate(t('actionTrace.moreFiles'), { count: files.length - 8 }))
+                : null))
+          : null,
+        h('div', { className: 'pl-action-filters' },
+          filters.map(([value, label]) => h('button', {
+            key: value,
+            type: 'button',
+            className: 'pl-action-filter' + (filter === value ? ' is-active' : ''),
+            'aria-pressed': filter === value,
+            onClick: () => { setFilter(value); setShowAll(false); },
+          }, label)),
+          fileFilter !== null ? h('button', {
+            type: 'button',
+            className: 'pl-action-filter is-file',
+            onClick: () => setFileFilter(null),
+          }, '× ' + (files.find((file) => file.path === fileFilter)?.label || fileFilter)) : null),
+        shown.length === 0
+          ? h('p', { className: 'pl-action-empty' }, t('actionTrace.emptyFilter'))
+          : h('div', { className: 'pl-action-timeline' }, shown.map((action, index) => {
+            const open = openId === action.id;
+            return h('div', { className: 'pl-action-wrap' + (open ? ' is-open' : ''), key: action.id },
+              h('button', {
+                type: 'button',
+                className: 'pl-action-item',
+                'aria-expanded': open,
+                onClick: () => setOpenId(open ? null : action.id),
+              },
+              h('span', { className: 'pl-action-rail' },
+                h('span', { className: 'pl-action-icon is-' + action.kind }, h(ActionIcon, { kind: action.kind })),
+                index < shown.length - 1 ? h('span', { className: 'pl-action-line' }) : null),
+              h('span', { className: 'pl-action-body' },
+                h('span', { className: 'pl-action-title' }, actionTitle(action, zh)),
+                h('span', { className: 'pl-action-meta' },
+                  h('span', { className: 'pl-action-status is-' + (action.status || 'running') }, actionStatusText(action.status, t)),
+                  action.startedAt ? h('span', { className: 'pl-action-time' }, formatDate(action.startedAt, zh)) : null,
+                  Array.isArray(action.targets) && action.targets.length > 0
+                    ? h('span', { className: 'pl-action-targets' }, action.targets.map((item) => item.label).join(' · '))
+                    : null)),
+              h('span', { className: 'pl-action-chevron' }, h(ChevronIcon, { open }))),
+              open ? h(ActionEvidence, { action, t, zh }) : null);
+          })),
+        (showAll ? filtered.length > 6 : filtered.length > shown.length)
+          ? h('button', {
+            type: 'button',
+            className: 'pl-actions-more',
+            onClick: () => setShowAll((value) => !value),
+          }, showAll ? t('actionTrace.showLess') : interpolate(t('actionTrace.showAll'), { count: filtered.length }))
+          : null);
+    }
+
+    function ResultCard({ prompt, t, zh }) {
+      const [showProcess, setShowProcess] = useState(false);
+      const actions = Array.isArray(prompt.actions) ? prompt.actions : [];
+      useEffect(() => { setShowProcess(false); }, [prompt.id]);
+      const outcome = buildOutcome(actions, prompt.response, zh);
+      if (actions.length === 0 && !outcome.narrative) return null;
+      const phases = [
+        interpolate(t('result.phaseSee'), { count: actions.filter((action) => ['read', 'search', 'view'].includes(action.kind)).length }),
+        interpolate(t('result.phaseChange'), { count: actions.filter((action) => ['edit', 'write'].includes(action.kind)).length }),
+        interpolate(t('result.phaseRun'), { count: actions.filter((action) => ['command', 'mcp', 'web'].includes(action.kind)).length }),
+        interpolate(t('result.phaseDeliver'), { count: actions.filter((action) => action.kind === 'deliver').length }),
+      ];
+      const kpi = (value, label, tone) => h('div', { className: 'pl-result-kpi is-' + tone },
+        h('b', null, value),
+        h('span', null, label));
+      const visibleDeliverables = outcome.deliverables.slice(0, 6);
+      const deliverableCards = visibleDeliverables.map((item) => h('div', { className: 'pl-result-deliverable is-' + item.key, key: item.path },
+        h('div', { className: 'pl-result-deliverable-icon' }, h(ActionIcon, { kind: item.icon, size: 18 })),
+        h('div', { className: 'pl-result-deliverable-copy' },
+          h('b', { title: item.path }, item.label),
+          h('span', null, item.description || item.label)),
+        h('span', { className: 'pl-result-deliverable-badge' }, item.explicit ? (zh ? '已交付' : 'Delivered') : (zh ? '已产出' : 'Created'))));
+      if (outcome.deliverables.length > 6) deliverableCards.push(h('div', { className: 'pl-result-deliverable is-more', key: 'more' }, h('b', null, '+' + (outcome.deliverables.length - 6)), h('span', null, zh ? '更多产出' : 'more outputs')));
+      const changeRows = outcome.groups.map((group) => h('div', { className: 'pl-result-change', key: group.name },
+        h('span', { className: 'pl-result-change-icon' }, h(ActionIcon, { kind: 'edit', size: 14 })),
+        h('div', { className: 'pl-result-change-main' },
+          h('div', { className: 'pl-result-change-title' },
+            h('b', null, group.name),
+            h('span', null, interpolate(t('result.files'), { count: group.files }))),
+          h('div', { className: 'pl-result-change-files' }, group.top.map((file) => file.label).join(' · '))),
+        h('div', { className: 'pl-result-change-stats' },
+          group.added > 0 ? h('span', { className: 'is-add' }, '+' + group.added) : null,
+          group.removed > 0 ? h('span', { className: 'is-del' }, '−' + group.removed) : null)));
+      const checkRows = outcome.verifications.map((check) => h('div', { className: 'pl-result-check is-' + check.status, key: check.label },
+        check.status === 'error' ? h(CloseIcon, { size: 12 }) : h(CheckIcon, { size: 12 }),
+        h('span', null, check.label)));
+      return h('section', { className: 'pl-result' },
+        h('div', { className: 'pl-result-head' },
+          h('div', { className: 'pl-result-head-copy' },
+            h('div', { className: 'pl-result-eyebrow' }, t('result.eyebrow')),
+            h('h3', { className: 'pl-result-title' }, outcome.narrative || outcome.headline),
+            outcome.narrative ? h('span', { className: 'pl-result-attrib' }, t('result.modelNote')) : null,
+            h('p', { className: 'pl-result-sentence' }, outcome.sentence)),
+          h(StatusBadge, { status: prompt.status, t })),
+        h('div', { className: 'pl-result-kpis' },
+          kpi(outcome.deliverables.length, t('result.delivered'), 'deliver'),
+          kpi(outcome.changes.length, t('result.changedFiles'), 'change'),
+          kpi(outcome.checksTotal > 0 ? outcome.checksPassed + '/' + outcome.checksTotal : '—', t('result.verified'), 'check'),
+          kpi(outcome.errors, t('result.errors'), outcome.errors > 0 ? 'error' : 'clean')),
+        outcome.items.length > 0
+          ? h('div', { className: 'pl-result-section is-items' },
+            h('h4', null, t('result.completed'), h('span', { className: 'pl-result-section-note' }, t('result.basedOnNote'))),
+            h('div', { className: 'pl-result-items' }, outcome.items.map((item) => h('div', { className: 'pl-result-item', key: item.title },
+              h('span', { className: 'pl-result-item-check' }, h(CheckIcon, { size: 11 })),
+              h('div', { className: 'pl-result-item-copy' },
+                h('b', null, item.title),
+                item.detail ? h('span', null, item.detail) : null)))))
+          : null,
+        outcome.deliverables.length > 0
+          ? h('div', { className: 'pl-result-section' },
+            h('h4', null, t('result.delivered')),
+            h('div', { className: 'pl-result-deliverables' }, deliverableCards))
+          : null,
+        h('div', { className: 'pl-result-section' },
+          h('h4', null, t('result.changed')),
+          outcome.changes.length > 0
+            ? h('div', { className: 'pl-result-changes' }, changeRows)
+            : h('p', { className: 'pl-result-empty' }, t('result.noChanges'))),
+        h('div', { className: 'pl-result-section is-checks' },
+          h('h4', null, t('result.verified')),
+          outcome.verifications.length > 0
+            ? h('div', { className: 'pl-result-checks' }, checkRows)
+            : h('p', { className: 'pl-result-empty' }, t('result.noChecks'))),
+        h('div', { className: 'pl-result-footer' },
+          h('div', { className: 'pl-result-phases' }, phases.map((label) => h('span', { key: label }, label))),
+          actions.length > 0
+            ? h('button', {
+              type: 'button',
+              className: 'pl-result-process-toggle',
+              onClick: () => setShowProcess((value) => !value),
+            }, showProcess ? t('result.closeProcess') : t('result.openProcess'), h(ChevronIcon, { open: showProcess }))
+            : null),
+        showProcess ? h('div', { className: 'pl-result-process' }, h(ActionTrace, { prompt, t, zh, compact: true })) : null);
+    }
+
     function PromptDetail({ prompt, t, zh, bootstrap, onClose, onRate, onSaveNote, onSaveTags, onToggleFavorite, onRetry }) {
       const [note, setNote] = useState('');
       const [tags, setTags] = useState('');
@@ -1723,6 +2542,8 @@ window.__ModuleLoader__.load({
       const rating = prompt.rating?.stars ?? 0;
       const tokens = prompt.tokens ?? {};
       const auto = prompt.auto;
+      const actionTotal = prompt.actionSummary?.total ?? prompt.toolCalls ?? 0;
+      const actionErrors = prompt.actionSummary?.errors ?? prompt.toolErrors ?? 0;
       const events = Array.isArray(prompt.events) ? prompt.events : [];
       const lastHash = events.length > 0 ? events[events.length - 1].hash : prompt.rowHash;
       return h('div', { className: 'pl-detail' },
@@ -1758,6 +2579,8 @@ window.__ModuleLoader__.load({
           Array.isArray(prompt.skills) && prompt.skills.length > 0 ? h(Badge, { tone: 'skill' }, `Skill · ${prompt.skills.length}`) : null,
           Array.isArray(prompt.mcp) && prompt.mcp.length > 0 ? h(Badge, { tone: 'mcp' }, `MCP · ${prompt.mcp.length}`) : null),
 
+        h(ResultCard, { prompt, t, zh }),
+
         h('div', { className: 'pl-block' },
           h('div', { className: 'pl-block-label' }, t('prompts.prompt')),
           h('div', { className: 'pl-quote' }, prompt.prompt || '—')),
@@ -1773,7 +2596,7 @@ window.__ModuleLoader__.load({
           h(Metric, { label: t('metric.output'), value: formatTokens(tokens.output) }),
           h(Metric, { label: t('metric.total'), value: formatTokens(tokens.total) }),
           h(Metric, { label: t('metric.latency'), value: formatDuration(prompt.latencyMs) }),
-          h(Metric, { label: t('metric.toolCalls'), value: `${prompt.toolCalls ?? 0}${prompt.toolErrors ? ` · ${prompt.toolErrors} ${t('metric.errors')}` : ''}` }),
+          h(Metric, { label: t('metric.actions'), value: `${actionTotal}${actionErrors ? ` · ${actionErrors} ${t('metric.errors')}` : ''}` }),
           h(Metric, { label: t('detail.turn'), value: prompt.turn ?? '—' })),
 
         h('div', { className: 'pl-review-grid' },
@@ -2355,9 +3178,309 @@ window.__ModuleLoader__.load({
     /* Panel                                                               */
     /* ------------------------------------------------------------------ */
 
+    function ActionMapPhase({ phase, t }) {
+      const key = phase[0];
+      const label = phase[1];
+      const hint = phase[2];
+      const count = phase[3];
+      const icon = phase[4];
+      return h('div', { className: 'pl-map-phase is-' + key },
+        h('span', { className: 'pl-map-phase-icon' }, h(ActionIcon, { kind: icon, size: 16 })),
+        h('span', { className: 'pl-map-phase-copy' },
+          h('b', null, count),
+          h('span', null, label),
+          h('small', null, hint)));
+    }
+
+    function ActionMapFileChip({ file, active, onClick, t }) {
+      return h('button', {
+        type: 'button',
+        className: 'pl-file-chip is-' + file.action + (active ? ' is-active' : ''),
+        title: file.path,
+        onClick,
+      },
+      h('span', { className: 'pl-file-chip-dot' }),
+      h('span', { className: 'pl-file-chip-name' }, file.label),
+      h('span', { className: 'pl-file-chip-action' }, actionLabel({ kind: file.action }, t)),
+      Number(file.count) > 1 ? h('span', { className: 'pl-file-chip-count' }, file.count) : null);
+    }
+
+    function ActionMapTurn({ turn, t, zh, onSelectPrompt }) {
+      const outcome = buildOutcome(turn.actions, turn.response, zh);
+      const groups = outcome.groups.slice(0, 3);
+      return h('div', { className: 'pl-map-turn' },
+        h('div', { className: 'pl-map-turn-head' },
+          h('span', { className: 'pl-map-turn-index' }, turn.turn === null || turn.turn === undefined ? '—' : String(turn.turn).padStart(2, '0')),
+          h('div', { className: 'pl-map-turn-copy' },
+            h('div', { className: 'pl-map-turn-kicker' },
+              interpolate(t('actionsMap.turn'), { turn: turn.turn ?? '—' }),
+              turn.createdAt ? h('span', null, ' · ' + formatDate(turn.createdAt, zh)) : null,
+              turn.model ? h('span', { className: 'pl-map-turn-model' }, ' · ' + turn.model) : null),
+            h('p', { className: 'pl-map-turn-prompt' }, turn.prompt || '—')),
+          h(StatusBadge, { status: turn.status, t })),
+        outcome.items.length > 0
+          ? h('div', { className: 'pl-map-turn-items' }, outcome.items.slice(0, 2).map((item) => h('span', { className: 'pl-map-turn-item', key: item.title },
+            h('b', null, '✓'), item.title)))
+          : null,
+        h('p', { className: 'pl-map-turn-summary' }, outcome.sentence),
+        h('div', { className: 'pl-map-turn-stats' },
+          h('span', { className: 'is-strong' }, interpolate(t('result.deliverables'), { count: outcome.deliverables.length })),
+          h('span', null, interpolate(t('result.changedFiles'), { count: outcome.changes.length })),
+          outcome.checksTotal > 0 ? h('span', null, interpolate(t('result.checks'), { passed: outcome.checksPassed, total: outcome.checksTotal })) : null,
+          outcome.errors > 0 ? h('span', { className: 'is-error' }, interpolate(t('result.errors'), { count: outcome.errors })) : null),
+        outcome.deliverables.length > 0
+          ? h('div', { className: 'pl-map-turn-files' }, outcome.deliverables.slice(0, 3).map((item) => h('span', {
+            key: item.path,
+            className: 'pl-map-file-tag is-deliver',
+            title: item.path,
+          }, item.label)))
+          : null,
+        groups.length > 0
+          ? h('div', { className: 'pl-map-turn-groups' }, groups.map((group) => h('div', { className: 'pl-map-turn-group', key: group.name },
+            h('span', { className: 'pl-map-turn-group-name' }, group.name),
+            h('span', { className: 'pl-map-turn-group-meta' }, interpolate(t('result.files'), { count: group.files })),
+            group.added > 0 ? h('span', { className: 'is-add' }, '+' + group.added) : null,
+            group.removed > 0 ? h('span', { className: 'is-del' }, '−' + group.removed) : null)))
+          : h('p', { className: 'pl-map-turn-empty' }, t('result.noChanges')),
+        h('button', {
+          type: 'button',
+          className: 'pl-map-turn-link',
+          onClick: () => onSelectPrompt(turn.promptId),
+        }, t('actionsMap.viewTurn'), h(ArrowRightIcon)));
+    }
+
+    function ActionMapView({ t, zh, onSelectPrompt, notify, refreshKey }) {
+      const [sessions, setSessions] = useState(null);
+      const [selectedId, setSelectedId] = useState(null);
+      const [session, setSession] = useState(null);
+      const [loadingSessions, setLoadingSessions] = useState(true);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+      const [backfilling, setBackfilling] = useState(false);
+      const [fileFilter, setFileFilter] = useState(null);
+      const [upgradeRequired, setUpgradeRequired] = useState(false);
+
+      const loadSessions = useCallback(async (preferred) => {
+        setLoadingSessions(true);
+        setUpgradeRequired(false);
+        try {
+          const body = await requestJson('/api/prompt-ledger/sessions');
+          const list = Array.isArray(body.sessions) ? body.sessions : [];
+          setUpgradeRequired(false);
+          setSessions(list);
+          setSelectedId((current) => {
+            const wanted = preferred ?? current;
+            if (wanted && list.some((item) => item.sessionId === wanted)) return wanted;
+            const withActions = list.find((item) => Number(item.actionCount) > 0);
+            return withActions?.sessionId ?? list[0]?.sessionId ?? null;
+          });
+        } catch (loadError) {
+          const message = loadError.message || '';
+          if (/404/.test(message)) {
+            setUpgradeRequired(true);
+            setError(null);
+          } else {
+            setError(message);
+          }
+        } finally {
+          setLoadingSessions(false);
+        }
+      }, []);
+
+      useEffect(() => {
+        loadSessions();
+      }, [loadSessions]);
+
+      useEffect(() => {
+        if (selectedId === null) {
+          setSession(null);
+          return undefined;
+        }
+        let cancelled = false;
+        setLoading(true);
+        setError(null);
+        setFileFilter(null);
+        requestJson('/api/prompt-ledger/session-actions?sessionId=' + encodeURIComponent(selectedId))
+          .then((body) => {
+            if (!cancelled) setSession(body.session ?? null);
+          })
+          .catch((loadError) => {
+            if (!cancelled) setError(loadError.message);
+          })
+          .finally(() => {
+            if (!cancelled) setLoading(false);
+          });
+        return () => { cancelled = true; };
+      }, [selectedId, refreshKey]);
+
+      useEffect(() => {
+        if (refreshKey > 0) loadSessions(selectedId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [refreshKey]);
+
+      const runBackfill = useCallback(async () => {
+        if (selectedId === null || backfilling) return;
+        setBackfilling(true);
+        try {
+          const body = await requestJson('/api/prompt-ledger/actions/backfill', {
+            method: 'POST',
+            body: JSON.stringify({ sessionId: selectedId }),
+          });
+          setSession(body.session ?? null);
+          if (notify) {
+            const count = Number(body.inserted) || 0;
+            notify(
+              count > 0 ? interpolate(t('actionsMap.backfillDone'), { count }) : t('actionsMap.backfillNone'),
+              'success',
+            );
+          }
+          await loadSessions(selectedId);
+        } catch (backfillError) {
+          setError(backfillError.message);
+          if (notify) notify(backfillError.message, 'error');
+        } finally {
+          setBackfilling(false);
+        }
+      }, [backfilling, loadSessions, notify, selectedId, t]);
+
+      if (upgradeRequired) {
+        return h('div', { className: 'pl-map' },
+          h('div', { className: 'pl-map-head' },
+            h('div', null,
+              h('div', { className: 'pl-map-eyebrow' }, 'SESSION OUTCOMES'),
+              h('h2', null, t('actionsMap.title')),
+              h('p', { className: 'pl-map-sub' }, t('actionsMap.subtitle')))),
+          h('div', { className: 'pl-map-upgrade' },
+            h('span', { className: 'pl-map-upgrade-icon' }, h(RefreshIcon, { size: 20, spinning: loadingSessions })),
+            h('h3', null, t('actionsMap.upgradeTitle')),
+            h('p', null, t('actionsMap.upgradeHint')),
+            h('div', { className: 'pl-map-upgrade-steps' },
+              h('span', null, h('b', null, '1'), t('actionsMap.upgradeStep1')),
+              h('span', null, h('b', null, '2'), t('actionsMap.upgradeStep2')),
+              h('span', null, h('b', null, '3'), t('actionsMap.upgradeStep3'))),
+            h('button', {
+              type: 'button',
+              className: 'pl-btn is-primary',
+              onClick: () => loadSessions(),
+              disabled: loadingSessions,
+            }, h(RefreshIcon, { spinning: loadingSessions }), t('actionsMap.retryCheck'))));
+      }
+
+      if (loadingSessions && sessions === null) return h(LoadingRows, { rows: 6 });
+      if (sessions !== null && sessions.length === 0) {
+        return h('div', { className: 'pl-map-empty' },
+          h('span', { className: 'pl-empty-mark' }, h(ActionIcon, { kind: 'plan', size: 18 })),
+          h('h3', null, t('actionsMap.noSession')),
+          h('p', null, t('actionsMap.noSessionHint')));
+      }
+
+      const files = Array.isArray(session?.files) ? session.files : [];
+      const turns = Array.isArray(session?.turns) ? session.turns : [];
+      const allActions = turns.flatMap((turn) => (Array.isArray(turn.actions) ? turn.actions : []));
+      const outcome = buildOutcome(allActions, null, zh, 'session');
+      const filteredTurns = fileFilter === null
+        ? turns
+        : turns.filter((turn) => (turn.files ?? []).some((file) => file.path === fileFilter));
+      const phases = [
+        ['outputs', t('actionsMap.outputs'), t('actionsMap.outputsHint'), outcome.deliverables.length, 'deliver'],
+        ['change', t('actionsMap.changes'), t('actionsMap.changesHint'), outcome.changes.length, 'edit'],
+        ['checks', t('actionsMap.checks'), t('actionsMap.checksHint'), outcome.checksTotal > 0 ? outcome.checksPassed + '/' + outcome.checksTotal : '—', 'command'],
+        ['rounds', t('actionsMap.rounds'), t('actionsMap.roundsHint'), turns.length, 'plan'],
+      ];
+      const sessionLabel = (item) => {
+        const base = item.title || item.lastPrompt || t('actionsMap.sessionLabel').replace('{id}', String(item.sessionId).slice(0, 8));
+        return base + ' · ' + interpolate(t('actionsMap.turns'), { count: item.promptCount }) + ' · ' + interpolate(t('actionsMap.actions'), { count: item.actionCount });
+      };
+
+      const header = h('div', { className: 'pl-map-head' },
+        h('div', null,
+          h('div', { className: 'pl-map-eyebrow' }, 'SESSION OUTCOMES'),
+          h('h2', null, t('actionsMap.title')),
+          h('p', { className: 'pl-map-sub' }, t('actionsMap.subtitle'))),
+        h('div', { className: 'pl-map-toolbar' },
+          h('label', { className: 'pl-map-select-wrap' },
+            h('span', null, t('actionsMap.session')),
+            h('select', {
+              className: 'pl-map-select',
+              value: selectedId ?? '',
+              onChange: (event) => setSelectedId(event.target.value || null),
+              disabled: loadingSessions || sessions === null,
+            }, (sessions ?? []).map((item) => h('option', { key: item.sessionId, value: item.sessionId }, sessionLabel(item))))),
+          h('button', {
+            type: 'button',
+            className: 'pl-btn pl-map-backfill',
+            onClick: runBackfill,
+            disabled: selectedId === null || backfilling,
+            title: t('actionsMap.backfill'),
+          }, h(RefreshIcon, { spinning: backfilling }), backfilling ? t('actionsMap.backfilling') : t('actionsMap.backfill'))));
+
+      const body = [];
+      if (error !== null) {
+        body.push(h('div', { className: 'pl-map-error' },
+          h('span', null, error),
+          h('button', { type: 'button', className: 'pl-btn', onClick: () => loadSessions(selectedId) }, t('action.retry'))));
+      }
+      if (loading) {
+        body.push(h(LoadingRows, { key: 'loading', rows: 6 }));
+      } else if (session === null) {
+        body.push(h('div', { key: 'empty', className: 'pl-map-empty' },
+          h('h3', null, t('actionsMap.noSession')),
+          h('p', null, t('actionsMap.noSessionHint'))));
+      } else {
+        body.push(h('p', { key: 'summary', className: 'pl-map-summary' }, outcome.sentence));
+        body.push(h('div', { key: 'phases', className: 'pl-map-phases' }, phases.map((phase) => h(ActionMapPhase, { key: phase[0], phase, t }))));
+        if (outcome.deliverables.length > 0) {
+          body.push(h('div', { key: 'deliverables', className: 'pl-map-deliverables' }, outcome.deliverables.slice(0, 4).map((item) => h('div', { className: 'pl-result-deliverable is-' + item.key, key: item.path },
+            h('div', { className: 'pl-result-deliverable-icon' }, h(ActionIcon, { kind: item.icon, size: 18 })),
+            h('div', { className: 'pl-result-deliverable-copy' },
+              h('b', { title: item.path }, item.label),
+              h('span', null, item.description || item.label)),
+            h('span', { className: 'pl-result-deliverable-badge' }, item.explicit ? (zh ? '已交付' : 'Delivered') : (zh ? '已产出' : 'Created'))))));
+        }
+        if (files.length > 0) {
+          body.push(h('details', { key: 'files', className: 'pl-map-files', open: fileFilter !== null },
+            h('summary', null,
+              h('span', null, t('actionTrace.filesTitle')),
+              h('small', null, interpolate(t('result.files'), { count: files.length }))),
+            h('div', { className: 'pl-file-chips' }, files.slice(0, 16).map((file) => h(ActionMapFileChip, {
+              key: file.path,
+              file,
+              active: fileFilter === file.path,
+              t,
+              onClick: () => setFileFilter((current) => (current === file.path ? null : file.path)),
+            })))));
+        }
+        if (fileFilter !== null) {
+          body.push(h('button', { key: 'clear', type: 'button', className: 'pl-map-clear', onClick: () => setFileFilter(null) },
+            '× ' + t('actionsMap.clearFilter')));
+        }
+        if (turns.length === 0) {
+          body.push(h('div', { key: 'no-actions', className: 'pl-map-empty is-inline' },
+            h('h3', null, t('actionsMap.empty')),
+            h('p', null, t('actionsMap.emptyHint')),
+            h('button', { type: 'button', className: 'pl-btn is-primary', onClick: runBackfill, disabled: backfilling },
+              h(RefreshIcon, { spinning: backfilling }), backfilling ? t('actionsMap.backfilling') : t('actionsMap.backfill'))));
+        } else if (filteredTurns.length === 0) {
+          body.push(h('div', { key: 'filtered-empty', className: 'pl-map-empty is-inline' },
+            h('p', null, t('actionTrace.emptyFilter'))));
+        } else {
+          body.push(h('div', { key: 'turns', className: 'pl-map-turns' }, filteredTurns.map((turn) => h(ActionMapTurn, {
+            key: turn.promptId,
+            turn,
+            t,
+            zh,
+            onSelectPrompt,
+          }))));
+        }
+      }
+
+      return h('div', { className: 'pl-map' }, header, body);
+    }
+
     const TABS = [
       ['overview', 'nav.overview', 'pl-tab-overview'],
       ['prompts', 'nav.prompts', 'pl-tab-prompts'],
+      ['actions', 'nav.actions', 'pl-tab-actions'],
       ['analytics', 'nav.analytics', 'pl-tab-analytics'],
       ['connect', 'nav.connect', 'pl-tab-connect'],
     ];
@@ -2432,7 +3555,7 @@ window.__ModuleLoader__.load({
       }, [refreshKey]);
 
       const loadTab = useCallback(async (target = tab) => {
-        if (target === 'connect') return;
+        if (target === 'connect' || target === 'actions') return;
         const id = ++requestId.current;
         setLoading((state) => ({ ...state, [target]: true }));
         setErrors((state) => ({ ...state, [target]: null }));
@@ -2721,6 +3844,9 @@ window.__ModuleLoader__.load({
                     onRetry: () => loadDetail(selectedId),
                   })));
         }
+        if (tab === 'actions') {
+          return h(ActionMapView, { t, zh, onSelectPrompt: selectPrompt, notify, refreshKey });
+        }
         if (tab === 'analytics') {
           return h(AnalyticsView, {
             data: data.analytics,
@@ -2751,7 +3877,6 @@ window.__ModuleLoader__.load({
       const showFilters = tab === 'overview' || tab === 'prompts' || tab === 'analytics';
 
       return h('div', { className: 'pl-root' },
-        h('style', null, CSS),
         h('header', { className: 'pl-head' },
           h('div', { className: 'pl-head-inner' },
             h('div', { className: 'pl-brand' },
@@ -3003,6 +4128,257 @@ window.__ModuleLoader__.load({
 .pl-tool-status{font-size:8.5px;color:var(--dsw-alias-label-secondary)}
 .pl-tool-row.is-error .pl-tool-status{color:var(--dsw-alias-state-error-primary)}
 .pl-tool-error{grid-column:2/-1;font-size:9px;color:var(--dsw-alias-state-error-primary);word-break:break-word}
+.pl-actions{margin:0 0 14px;padding:14px;border:1px solid var(--dsw-alias-border-l1);border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--dsw-alias-bg-layer-1) 92%,transparent),color-mix(in srgb,var(--dsw-alias-bg-base) 88%,transparent))}
+.pl-actions-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.pl-actions-eyebrow{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-actions-pulse{width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-state-success-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--dsw-alias-state-success-primary) 16%,transparent)}
+.pl-actions h3{margin:5px 0 0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.pl-actions-hint{margin:3px 0 0;font-size:10px;line-height:1.5;color:var(--dsw-alias-label-secondary)}
+.pl-actions-stats{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
+.pl-actions-stat{font-size:9px;line-height:1;padding:4px 7px;border:1px solid var(--dsw-alias-border-l1);border-radius:999px;color:var(--dsw-alias-label-secondary);background:var(--dsw-alias-bg-base);white-space:nowrap}
+.pl-actions-stat.is-error{color:var(--dsw-alias-state-error-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-error-primary) 30%,var(--dsw-alias-border-l1))}
+.pl-actions-summary{margin:11px 0 0;font-size:12px;line-height:1.7;color:var(--dsw-alias-label-primary)}
+.pl-actions-files{margin-top:12px}
+.pl-actions-files-label{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-file-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.pl-file-chip{appearance:none;display:inline-flex;align-items:center;gap:5px;max-width:100%;height:25px;padding:0 7px;border:1px solid var(--dsw-alias-border-l1);border-radius:7px;background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-primary);font:inherit;font-size:10px;cursor:pointer;white-space:nowrap}
+.pl-file-chip:hover{border-color:var(--dsw-alias-border-l2);background:var(--dsw-alias-interactive-bg-hover)}
+.pl-file-chip.is-active{border-color:var(--dsw-alias-brand-primary);color:var(--dsw-alias-brand-primary);background:color-mix(in srgb,var(--dsw-alias-brand-primary) 8%,var(--dsw-alias-bg-base))}
+.pl-file-chip-dot{width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-label-tertiary);flex:0 0 auto}
+.pl-file-chip.is-read .pl-file-chip-dot{background:#4f8f86}
+.pl-file-chip.is-edit .pl-file-chip-dot{background:var(--dsw-alias-state-warn-primary)}
+.pl-file-chip.is-write .pl-file-chip-dot{background:var(--dsw-alias-brand-primary)}
+.pl-file-chip.is-deliver .pl-file-chip-dot{background:var(--dsw-alias-state-success-primary)}
+.pl-file-chip-name{overflow:hidden;text-overflow:ellipsis}
+.pl-file-chip-action{font-size:8.5px;color:var(--dsw-alias-label-secondary)}
+.pl-file-chip-count{font-size:8px;line-height:14px;min-width:14px;text-align:center;border-radius:999px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary)}
+.pl-file-chip.is-more{color:var(--dsw-alias-label-secondary);border-style:dashed}
+.pl-action-filters{display:flex;flex-wrap:wrap;gap:4px;margin:12px 0 6px}
+.pl-action-filter{appearance:none;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:9.5px;padding:3px 7px;cursor:pointer}
+.pl-action-filter:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
+.pl-action-filter.is-active{background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);border-color:var(--dsw-alias-border-l1)}
+.pl-action-filter.is-file{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-brand-primary)}
+.pl-action-wrap{position:relative}
+.pl-action-item{appearance:none;border:0;background:transparent;width:100%;display:flex;align-items:flex-start;gap:9px;padding:6px 4px;border-radius:8px;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.pl-action-item:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.pl-action-rail{position:relative;display:flex;flex-direction:column;align-items:center;flex:0 0 24px;min-height:30px}
+.pl-action-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);flex:0 0 auto}
+.pl-action-icon.is-read,.pl-action-icon.is-view{color:#3d857b;background:rgba(61,133,123,.12)}
+.pl-action-icon.is-edit,.pl-action-icon.is-write{color:var(--dsw-alias-state-warn-primary);background:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 12%,transparent)}
+.pl-action-icon.is-command{color:#7d7bd8;background:rgba(125,123,216,.12)}
+.pl-action-icon.is-search{color:#5b8ec9;background:rgba(91,142,201,.12)}
+.pl-action-icon.is-deliver{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 12%,transparent)}
+.pl-action-icon.is-web,.pl-action-icon.is-skill,.pl-action-icon.is-mcp{color:var(--dsw-alias-brand-primary);background:color-mix(in srgb,var(--dsw-alias-brand-primary) 10%,transparent)}
+.pl-action-line{width:1px;flex:1;min-height:8px;margin-top:3px;background:var(--dsw-alias-border-l1)}
+.pl-action-body{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.pl-action-title{font-size:11.5px;line-height:1.4;font-weight:500;color:var(--dsw-alias-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-action-meta{display:flex;align-items:center;gap:7px;min-width:0;font-size:9px;color:var(--dsw-alias-label-secondary)}
+.pl-action-status{flex:0 0 auto}
+.pl-action-status.is-ok{color:var(--dsw-alias-state-success-primary)}
+.pl-action-status.is-error{color:var(--dsw-alias-state-error-primary)}
+.pl-action-status.is-running{color:var(--dsw-alias-state-warn-primary)}
+.pl-action-time{flex:0 0 auto;font-variant-numeric:tabular-nums}
+.pl-action-targets{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.9}
+.pl-action-chevron{flex:0 0 auto;display:flex;align-items:center;color:var(--dsw-alias-label-tertiary);padding-top:4px}
+.pl-action-evidence{margin:0 4px 7px 37px;padding:8px 10px;border-left:1px solid var(--dsw-alias-border-l2);background:color-mix(in srgb,var(--dsw-alias-bg-base) 72%,transparent);border-radius:0 8px 8px 0}
+.pl-action-evidence-block{margin:0 0 7px}
+.pl-action-evidence-block:last-of-type{margin-bottom:0}
+.pl-action-evidence-label{display:block;margin-bottom:3px;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-action-code,.pl-action-result,.pl-action-error{margin:3px 0 0;padding:7px 8px;border-radius:6px;background:var(--dsw-alias-bg-base);border:1px solid var(--dsw-alias-border-l1);font-family:"SF Mono",Menlo,monospace;font-size:9.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-height:180px;overflow:auto}
+.pl-action-error{color:var(--dsw-alias-state-error-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-error-primary) 30%,var(--dsw-alias-border-l1))}
+.pl-action-pattern{font-family:"SF Mono",Menlo,monospace;font-size:9.5px;padding:2px 5px;border-radius:4px;background:var(--dsw-alias-bg-base);border:1px solid var(--dsw-alias-border-l1)}
+.pl-action-diff{display:flex;flex-direction:column;gap:4px}
+.pl-action-diff-head{display:flex;gap:8px;font-size:8.5px;color:var(--dsw-alias-label-secondary)}
+.pl-action-diff-head .is-removed{color:var(--dsw-alias-state-error-primary)}
+.pl-action-diff-head .is-added{color:var(--dsw-alias-state-success-primary)}
+.pl-action-diff-old,.pl-action-diff-new{margin:0;padding:6px 8px;border-radius:5px;font-family:"SF Mono",Menlo,monospace;font-size:9px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:110px;overflow:auto}
+.pl-action-diff-old{background:color-mix(in srgb,var(--dsw-alias-state-error-primary) 7%,var(--dsw-alias-bg-base));border-left:2px solid color-mix(in srgb,var(--dsw-alias-state-error-primary) 45%,transparent)}
+.pl-action-diff-new{background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 7%,var(--dsw-alias-bg-base));border-left:2px solid color-mix(in srgb,var(--dsw-alias-state-success-primary) 45%,transparent)}
+.pl-action-evidence-files{display:flex;flex-direction:column;gap:3px}
+.pl-action-evidence-file{display:flex;flex-direction:column;gap:1px;font-size:9.5px}
+.pl-action-evidence-file-path{font-family:"SF Mono",Menlo,monospace;word-break:break-all}
+.pl-action-evidence-file-desc{font-size:9px;color:var(--dsw-alias-label-secondary)}
+.pl-action-source{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:8px;padding-top:6px;border-top:1px dashed var(--dsw-alias-border-l1);font-size:8.5px;color:var(--dsw-alias-label-secondary)}
+.pl-action-source code{font-family:"SF Mono",Menlo,monospace;font-size:8.5px;padding:1px 4px;border-radius:4px;background:var(--dsw-alias-bg-base)}
+.pl-action-source-tool{color:var(--dsw-alias-brand-primary)}
+.pl-action-source-seq{opacity:.7}
+.pl-actions-more{appearance:none;display:block;width:100%;margin-top:5px;padding:6px;border:1px dashed var(--dsw-alias-border-l1);border-radius:7px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:9.5px;cursor:pointer}
+.pl-actions-more:hover{color:var(--dsw-alias-label-primary);border-color:var(--dsw-alias-border-l2);background:var(--dsw-alias-interactive-bg-hover)}
+.pl-action-empty{margin:6px 0 0;padding:8px;font-size:9.5px;color:var(--dsw-alias-label-secondary);text-align:center;border:1px dashed var(--dsw-alias-border-l1);border-radius:7px}
+.pl-map{max-width:1120px;margin:0 auto;padding:22px 24px 44px}
+.pl-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.pl-map-eyebrow{font-family:"SF Mono",Menlo,monospace;font-size:9px;letter-spacing:.12em;color:var(--dsw-alias-label-secondary)}
+.pl-map h2{margin:5px 0 0;font-size:24px;letter-spacing:-.02em}
+.pl-map-sub{margin:5px 0 0;font-size:11.5px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.pl-map-toolbar{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.pl-map-select-wrap{display:flex;flex-direction:column;gap:4px;min-width:260px;max-width:420px}
+.pl-map-select-wrap>span{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-map-select{appearance:none;height:32px;max-width:420px;padding:0 30px 0 9px;border:1px solid var(--dsw-alias-border-l1);border-radius:8px;background:var(--dsw-alias-bg-layer-1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;color:var(--dsw-alias-label-primary);font:inherit;font-size:10.5px;text-overflow:ellipsis;cursor:pointer}
+.pl-map-select:disabled{opacity:.6;cursor:default}
+.pl-map-backfill{height:32px;white-space:nowrap}
+.pl-map-stats{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:16px}
+.pl-map-stat{font-size:9.5px;padding:4px 8px;border:1px solid var(--dsw-alias-border-l1);border-radius:999px;background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-secondary)}
+.pl-map-stat.is-error{color:var(--dsw-alias-state-error-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-error-primary) 30%,var(--dsw-alias-border-l1))}
+.pl-map-last{margin-left:auto;font-size:9px;color:var(--dsw-alias-label-tertiary)}
+.pl-map-summary{margin:10px 0 0;font-size:12px;line-height:1.7;color:var(--dsw-alias-label-primary)}
+.pl-map-phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.pl-map-phase{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:var(--dsw-alias-bg-layer-1)}
+.pl-map-phase-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary)}
+.pl-map-phase.is-see .pl-map-phase-icon{color:#3d857b;background:rgba(61,133,123,.12)}
+.pl-map-phase.is-change .pl-map-phase-icon{color:var(--dsw-alias-state-warn-primary);background:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 12%,transparent)}
+.pl-map-phase.is-run .pl-map-phase-icon{color:#7d7bd8;background:rgba(125,123,216,.12)}
+.pl-map-phase.is-deliver .pl-map-phase-icon{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 12%,transparent)}
+.pl-map-phase.is-outputs .pl-map-phase-icon{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 12%,transparent)}
+.pl-map-phase.is-checks .pl-map-phase-icon{color:var(--dsw-alias-brand-primary);background:color-mix(in srgb,var(--dsw-alias-brand-primary) 10%,transparent)}
+.pl-map-phase.is-rounds .pl-map-phase-icon{color:var(--dsw-alias-label-secondary);background:var(--dsw-alias-bg-layer-2)}
+.pl-map-phase-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pl-map-phase-copy b{font-size:19px;line-height:1;font-weight:600;font-variant-numeric:tabular-nums}
+.pl-map-phase-copy span{font-size:10.5px;color:var(--dsw-alias-label-primary)}
+.pl-map-phase-copy small{font-size:8.5px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-map-files{margin-top:14px;padding:11px 12px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:color-mix(in srgb,var(--dsw-alias-bg-layer-1) 75%,transparent)}
+.pl-map-files-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pl-map-files-head>span{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-map-files-head small{font-size:8.5px;color:var(--dsw-alias-label-tertiary)}
+.pl-map-files summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-map-files summary::-webkit-details-marker{display:none}
+.pl-map-files summary small{font-size:8.5px;letter-spacing:0;text-transform:none;color:var(--dsw-alias-label-tertiary)}
+.pl-map-files summary:after{content:"+";margin-left:4px;color:var(--dsw-alias-label-tertiary);font-size:11px}
+.pl-map-files[open] summary:after{content:"−"}
+.pl-map-clear{appearance:none;margin-top:7px;padding:3px 7px;border:1px solid var(--dsw-alias-brand-primary);border-radius:6px;background:transparent;color:var(--dsw-alias-brand-primary);font:inherit;font-size:9px;cursor:pointer}
+.pl-map-turns{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.pl-map-turn{padding:13px 14px;border:1px solid var(--dsw-alias-border-l1);border-radius:12px;background:var(--dsw-alias-bg-layer-1)}
+.pl-map-turn-head{display:flex;align-items:flex-start;gap:10px}
+.pl-map-turn-index{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-family:"SF Mono",Menlo,monospace;font-size:10px;font-weight:600}
+.pl-map-turn-copy{flex:1;min-width:0}
+.pl-map-turn-kicker{display:flex;flex-wrap:wrap;gap:3px;font-size:9px;color:var(--dsw-alias-label-secondary)}
+.pl-map-turn-model{color:var(--dsw-alias-label-tertiary)}
+.pl-map-turn-prompt{margin:4px 0 0;font-size:12px;line-height:1.55;color:var(--dsw-alias-label-primary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-map-turn-summary{margin:8px 0 0;font-size:10.5px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.pl-map-turn-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;font-size:9px;color:var(--dsw-alias-label-tertiary)}
+.pl-map-turn-stats .is-error{color:var(--dsw-alias-state-error-primary)}
+.pl-map-turn-files{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.pl-map-file-tag{max-width:100%;padding:2px 6px;border:1px solid var(--dsw-alias-border-l1);border-radius:5px;background:var(--dsw-alias-bg-base);font-size:8.5px;color:var(--dsw-alias-label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-map-file-tag.is-edit{border-color:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 28%,var(--dsw-alias-border-l1));color:var(--dsw-alias-state-warn-primary)}
+.pl-map-file-tag.is-deliver{border-color:color-mix(in srgb,var(--dsw-alias-state-success-primary) 28%,var(--dsw-alias-border-l1));color:var(--dsw-alias-state-success-primary)}
+.pl-map-turn-actions{display:flex;flex-direction:column;gap:2px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--dsw-alias-border-l1)}
+.pl-map-turn-action{display:flex;align-items:center;gap:6px;min-width:0}
+.pl-map-turn-action-icon{width:19px;height:19px;border-radius:5px;display:flex;align-items:center;justify-content:center;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);flex:0 0 auto}
+.pl-map-turn-action-icon.is-edit,.pl-map-turn-action-icon.is-write{color:var(--dsw-alias-state-warn-primary);background:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 10%,transparent)}
+.pl-map-turn-action-icon.is-deliver{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 10%,transparent)}
+.pl-map-turn-action-title{font-size:10.5px;color:var(--dsw-alias-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.pl-map-turn-action-status{font-size:8.5px;color:var(--dsw-alias-label-tertiary);flex:0 0 auto}
+.pl-map-turn-action-status.is-ok{color:var(--dsw-alias-state-success-primary)}
+.pl-map-turn-action-status.is-error{color:var(--dsw-alias-state-error-primary)}
+.pl-map-turn-empty{margin:6px 0 0;font-size:9px;color:var(--dsw-alias-label-tertiary)}
+.pl-map-turn-link{appearance:none;display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:0;border:0;background:transparent;color:var(--dsw-alias-brand-primary);font:inherit;font-size:9.5px;cursor:pointer}
+.pl-map-turn-link:hover{text-decoration:underline}
+.pl-map-stat.is-strong{color:var(--dsw-alias-state-success-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-success-primary) 28%,var(--dsw-alias-border-l1))}
+.pl-map-deliverables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.pl-map-turn-stats .is-strong{color:var(--dsw-alias-state-success-primary)}
+.pl-map-turn-groups{display:flex;flex-direction:column;gap:3px;margin-top:8px;padding-top:7px;border-top:1px dashed var(--dsw-alias-border-l1)}
+.pl-map-turn-group{display:flex;align-items:center;gap:7px;min-width:0;font-size:9.5px;color:var(--dsw-alias-label-secondary)}
+.pl-map-turn-group-name{font-weight:500;color:var(--dsw-alias-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-map-turn-group-meta{flex:0 0 auto;color:var(--dsw-alias-label-tertiary)}
+.pl-map-turn-group .is-add{color:var(--dsw-alias-state-success-primary);font-family:"SF Mono",Menlo,monospace}
+.pl-map-turn-group .is-del{color:var(--dsw-alias-state-error-primary);font-family:"SF Mono",Menlo,monospace}
+.pl-map-turn-items{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.pl-map-turn-item{display:inline-flex;align-items:center;gap:3px;max-width:100%;padding:2px 6px;border:1px solid var(--dsw-alias-border-l1);border-radius:5px;background:var(--dsw-alias-bg-base);font-size:8.5px;line-height:1.4;color:var(--dsw-alias-label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-map-turn-item b{color:var(--dsw-alias-state-success-primary);font-weight:600}
+@media (max-width: 820px){
+  .pl-map-deliverables{grid-template-columns:1fr}
+}
+.pl-map-empty{max-width:620px;margin:40px auto;padding:26px;text-align:center;border:1px dashed var(--dsw-alias-border-l1);border-radius:14px;background:var(--dsw-alias-bg-layer-1)}
+.pl-map-empty.is-inline{margin:16px 0 0;padding:18px}
+.pl-map-empty h3{margin:8px 0 0;font-size:14px}
+.pl-map-empty p{margin:5px 0 12px;font-size:10.5px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.pl-map-error{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--dsw-alias-state-error-primary) 30%,var(--dsw-alias-border-l1));border-radius:8px;color:var(--dsw-alias-state-error-primary);font-size:10px}
+.pl-map-upgrade{max-width:620px;margin:38px auto;padding:28px;border:1px solid var(--dsw-alias-border-l1);border-radius:16px;background:var(--dsw-alias-bg-layer-1);text-align:center}
+.pl-map-upgrade-icon{width:42px;height:42px;margin:0 auto;display:flex;align-items:center;justify-content:center;border-radius:12px;background:color-mix(in srgb,var(--dsw-alias-brand-primary) 10%,transparent);color:var(--dsw-alias-brand-primary)}
+.pl-map-upgrade h3{margin:12px 0 0;font-size:16px;font-weight:600}
+.pl-map-upgrade p{margin:6px 0 0;font-size:10.5px;line-height:1.7;color:var(--dsw-alias-label-secondary)}
+.pl-map-upgrade-steps{display:flex;flex-direction:column;gap:5px;max-width:300px;margin:16px auto;text-align:left}
+.pl-map-upgrade-steps span{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--dsw-alias-label-primary)}
+.pl-map-upgrade-steps b{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:8.5px;font-weight:600}
+.pl-map-upgrade .pl-btn{margin-top:2px}
+.pl-result{margin:0 0 16px;padding:18px;border:1px solid var(--dsw-alias-border-l1);border-radius:16px;background:linear-gradient(155deg,color-mix(in srgb,var(--dsw-alias-bg-layer-1) 96%,var(--dsw-alias-brand-primary) 4%),var(--dsw-alias-bg-base));box-shadow:0 10px 30px rgba(30,40,38,.05)}
+.pl-result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.pl-result-head-copy{min-width:0}
+.pl-result-eyebrow{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-result-title{margin:6px 0 0;font-size:22px;line-height:1.38;font-weight:600;letter-spacing:-.02em;color:var(--dsw-alias-label-primary);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pl-result-attrib{display:inline-block;margin-top:7px;font-size:8.5px;letter-spacing:.04em;color:var(--dsw-alias-label-tertiary)}
+.pl-result-sentence{margin:9px 0 0;font-size:11px;line-height:1.7;color:var(--dsw-alias-label-secondary)}
+.pl-result-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}
+.pl-result-kpi{padding:10px 11px;border:1px solid var(--dsw-alias-border-l1);border-radius:11px;background:color-mix(in srgb,var(--dsw-alias-bg-base) 70%,transparent)}
+.pl-result-kpi b{display:block;font-size:22px;line-height:1;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pl-result-kpi span{display:block;margin-top:4px;font-size:9px;line-height:1.3;color:var(--dsw-alias-label-secondary)}
+.pl-result-kpi.is-deliver b{color:var(--dsw-alias-state-success-primary)}
+.pl-result-kpi.is-change b{color:var(--dsw-alias-state-warn-primary)}
+.pl-result-kpi.is-check b{color:var(--dsw-alias-brand-primary)}
+.pl-result-kpi.is-error b{color:var(--dsw-alias-state-error-primary)}
+.pl-result-kpi.is-clean b{color:var(--dsw-alias-state-success-primary)}
+.pl-result-section{margin-top:16px}
+.pl-result-section h4{margin:0 0 8px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dsw-alias-label-secondary);font-weight:500}
+.pl-result-section-note{margin-left:6px;font-size:8px;letter-spacing:0;text-transform:none;color:var(--dsw-alias-label-tertiary);font-weight:400}
+.pl-result-items{display:flex;flex-direction:column;gap:1px}
+.pl-result-item{display:flex;align-items:flex-start;gap:8px;padding:7px 4px;border-bottom:1px solid var(--dsw-alias-border-l1)}
+.pl-result-item:last-child{border-bottom:0}
+.pl-result-item-check{width:18px;height:18px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:50%;background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 10%,transparent);color:var(--dsw-alias-state-success-primary)}
+.pl-result-item-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pl-result-item-copy b{font-size:11px;font-weight:600;line-height:1.4;color:var(--dsw-alias-label-primary)}
+.pl-result-item-copy span{font-size:9.5px;line-height:1.55;color:var(--dsw-alias-label-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-result-deliverables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pl-result-deliverable{display:flex;align-items:center;gap:10px;min-width:0;padding:10px;border:1px solid var(--dsw-alias-border-l1);border-radius:12px;background:var(--dsw-alias-bg-layer-1)}
+.pl-result-deliverable-icon{width:38px;height:38px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary)}
+.pl-result-deliverable.is-video .pl-result-deliverable-icon{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 11%,transparent)}
+.pl-result-deliverable.is-image .pl-result-deliverable-icon{color:var(--dsw-alias-brand-primary);background:color-mix(in srgb,var(--dsw-alias-brand-primary) 9%,transparent)}
+.pl-result-deliverable.is-doc .pl-result-deliverable-icon,.pl-result-deliverable.is-data .pl-result-deliverable-icon{color:var(--dsw-alias-state-warn-primary);background:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 10%,transparent)}
+.pl-result-deliverable-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.pl-result-deliverable-copy b{font-size:11.5px;font-weight:600;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-result-deliverable-copy span{font-size:8.5px;line-height:1.4;color:var(--dsw-alias-label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-result-deliverable-badge{flex:0 0 auto;font-size:8px;padding:2px 5px;border-radius:999px;color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 10%,transparent)}
+.pl-result-deliverable.is-more{flex-direction:column;align-items:center;justify-content:center;gap:1px;border-style:dashed;background:transparent;color:var(--dsw-alias-label-secondary)}
+.pl-result-deliverable.is-more b{font-size:14px;font-weight:600;color:var(--dsw-alias-brand-primary)}
+.pl-result-deliverable.is-more span{font-size:8px}
+.pl-result-changes{display:flex;flex-direction:column;gap:1px}
+.pl-result-change{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--dsw-alias-border-l1)}
+.pl-result-change:last-child{border-bottom:0}
+.pl-result-change-icon{width:26px;height:26px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:7px;background:color-mix(in srgb,var(--dsw-alias-state-warn-primary) 9%,transparent);color:var(--dsw-alias-state-warn-primary)}
+.pl-result-change-main{flex:1;min-width:0}
+.pl-result-change-title{display:flex;align-items:baseline;gap:7px;min-width:0}
+.pl-result-change-title b{font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-result-change-title span{flex:0 0 auto;font-size:8.5px;color:var(--dsw-alias-label-tertiary)}
+.pl-result-change-files{margin-top:2px;font-size:9px;line-height:1.4;color:var(--dsw-alias-label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-result-change-stats{display:flex;align-items:center;gap:5px;flex:0 0 auto;font-family:"SF Mono",Menlo,monospace;font-size:9px;font-variant-numeric:tabular-nums}
+.pl-result-change-stats .is-add{color:var(--dsw-alias-state-success-primary)}
+.pl-result-change-stats .is-del{color:var(--dsw-alias-state-error-primary)}
+.pl-result-checks{display:flex;flex-wrap:wrap;gap:6px}
+.pl-result-check{display:flex;align-items:center;gap:5px;min-width:0;max-width:100%;padding:5px 8px;border:1px solid var(--dsw-alias-border-l1);border-radius:7px;background:var(--dsw-alias-bg-base);font-size:9px;line-height:1.4;color:var(--dsw-alias-label-secondary)}
+.pl-result-check span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-result-check.is-ok{color:var(--dsw-alias-state-success-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-success-primary) 22%,var(--dsw-alias-border-l1))}
+.pl-result-check.is-error{color:var(--dsw-alias-state-error-primary);border-color:color-mix(in srgb,var(--dsw-alias-state-error-primary) 28%,var(--dsw-alias-border-l1))}
+.pl-result-empty{margin:0;font-size:9.5px;line-height:1.5;color:var(--dsw-alias-label-tertiary)}
+.pl-result-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid var(--dsw-alias-border-l1)}
+.pl-result-phases{display:flex;flex-wrap:wrap;gap:8px;font-size:9px;color:var(--dsw-alias-label-tertiary)}
+.pl-result-phases span{white-space:nowrap}
+.pl-result-process-toggle{appearance:none;display:inline-flex;align-items:center;gap:4px;padding:0;border:0;background:transparent;color:var(--dsw-alias-brand-primary);font:inherit;font-size:9.5px;cursor:pointer;white-space:nowrap}
+.pl-result-process-toggle:hover{text-decoration:underline}
+.pl-result-process{margin-top:10px;padding-top:2px;border-top:1px dashed var(--dsw-alias-border-l1)}
+.pl-actions.is-compact{margin:0;padding:10px 0 0;border:0;background:transparent;box-shadow:none}
+@media (max-width: 680px){
+  .pl-result{padding:14px}
+  .pl-result-title{font-size:18px}
+  .pl-result-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pl-result-deliverables{grid-template-columns:1fr}
+  .pl-result-footer{align-items:flex-start;flex-direction:column}
+}
+@media (max-width: 820px){
+  .pl-map{padding:16px 14px 30px}
+  .pl-map-phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pl-map-select-wrap{min-width:0;width:100%;max-width:none}
+  .pl-map-select{max-width:none;width:100%}
+  .pl-map-toolbar{width:100%}
+  .pl-map-last{margin-left:0;width:100%}
+}
 .pl-meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
 .pl-meta-grid .pl-metric{padding:6px 7px}
 .pl-submissions{display:flex;flex-direction:column;gap:5px}
@@ -3091,80 +4467,103 @@ window.__ModuleLoader__.load({
 .pl-rubric-row .pl-iconbtn{justify-self:center}
 .pl-rubric-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding-top:8px;border-top:1px solid var(--dsw-alias-border-l1)}
 .pl-rubric-foot .pl-btn.is-primary{margin-top:0}
-.pl-ledger-center{position:relative;display:flex;justify-content:center;width:100%;padding:0;margin:0 0 4px}
-.pl-ledger-pill{appearance:none;max-width:calc(100vw - 32px);height:28px;padding:0 10px 0 6px;border:1px solid var(--dsw-alias-border-l1);border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-bg-layer-1) 84%,transparent);backdrop-filter:blur(10px);color:var(--dsw-alias-label-secondary);font:inherit;font-size:10.5px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 2px 10px color-mix(in srgb,#000 7%,transparent);transition:border-color .15s ease,background .15s ease,transform .15s ease}
-.pl-ledger-pill:hover{border-color:color-mix(in srgb,var(--dsw-alias-brand-primary) 28%,var(--dsw-alias-border-l1));background:var(--dsw-alias-bg-layer-1);transform:translateY(-1px)}
-.pl-ledger-pill.is-open{border-color:color-mix(in srgb,var(--dsw-alias-brand-primary) 40%,var(--dsw-alias-border-l1));background:var(--dsw-alias-bg-layer-1)}
-.pl-ledger-pill:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:2px}
-.pl-ledger-pill-mark{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--dsw-alias-brand-primary) 10%,transparent);flex:0 0 auto}
-.pl-ledger-pill-title{font-size:10.5px;font-weight:600;color:var(--dsw-alias-label-primary);white-space:nowrap}
-.pl-ledger-pill-divider{width:1px;height:11px;background:var(--dsw-alias-border-l2);opacity:.7;flex:0 0 auto}
-.pl-ledger-pill-stat{font-size:10px;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-secondary)}
-.pl-ledger-pill-stat.is-warm{color:var(--dsw-alias-state-warn-primary)}
-.pl-ledger-pill-empty{font-size:9.5px;color:var(--dsw-alias-label-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-ledger-pill-sep{opacity:.28;font-size:9px;white-space:nowrap}
-.pl-ledger-chev{display:inline-flex;align-items:center;color:var(--dsw-alias-label-secondary);opacity:.7;flex:0 0 auto}
-.pl-ledger-panel{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:min(690px,calc(100vw - 36px));z-index:40;border:1px solid color-mix(in srgb,var(--dsw-alias-brand-primary) 16%,var(--dsw-alias-border-l1));border-radius:16px;background:var(--dsw-alias-bg-overlay);box-shadow:0 18px 48px color-mix(in srgb,#000 18%,transparent),0 0 0 1px color-mix(in srgb,#fff 3%,transparent);overflow:hidden;animation:pl-ledger-in .18s ease}
-.pl-ledger-panel:before{content:"";position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--dsw-alias-brand-primary) 55%,transparent),transparent);opacity:.8}
-.pl-ledger-head{display:flex;align-items:center;gap:9px;padding:11px 13px 10px;border-bottom:1px solid var(--dsw-alias-border-l1);background:linear-gradient(180deg,color-mix(in srgb,var(--dsw-alias-brand-primary) 5%,transparent),transparent)}
-.pl-ledger-mark{width:31px;height:31px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--dsw-alias-brand-primary) 10%,var(--dsw-alias-bg-layer-1));border:1px solid color-mix(in srgb,var(--dsw-alias-brand-primary) 20%,var(--dsw-alias-border-l1));flex:0 0 auto}
-.pl-ledger-title{display:flex;flex-direction:column;gap:1px;min-width:0}
-.pl-ledger-title strong{font-size:12px;font-weight:650;letter-spacing:.01em}
-.pl-ledger-title span{font-size:9.5px;color:var(--dsw-alias-label-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-ledger-chain{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:3px 7px;border-radius:999px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);white-space:nowrap;flex:0 0 auto}
-.pl-ledger-chain-dot{width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-state-idle-primary);flex:0 0 auto}
-.pl-ledger-chain.is-success{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 9%,transparent)}
-.pl-ledger-chain.is-success .pl-ledger-chain-dot{background:var(--dsw-alias-state-success-primary)}
-.pl-ledger-chain.is-error{color:var(--dsw-alias-state-error-primary);background:color-mix(in srgb,var(--dsw-alias-state-error-primary) 9%,transparent)}
-.pl-ledger-chain.is-error .pl-ledger-chain-dot{background:var(--dsw-alias-state-error-primary)}
-.pl-ledger-chain.is-loading .pl-ledger-chain-dot{background:var(--dsw-alias-state-warn-primary)}
-.pl-ledger-close{appearance:none;border:0;background:transparent;color:var(--dsw-alias-label-secondary);width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
-.pl-ledger-close:hover{background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary)}
-.pl-ledger-close:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
-.pl-ledger-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--dsw-alias-border-l1);border-bottom:1px solid var(--dsw-alias-border-l1)}
-.pl-ledger-module{appearance:none;border:0;background:var(--dsw-alias-bg-overlay);padding:9px 10px 8px;display:flex;flex-direction:column;gap:3px;text-align:left;min-width:0;cursor:pointer;color:inherit;font:inherit;position:relative;transition:background .12s ease}
-.pl-ledger-module:hover{background:color-mix(in srgb,var(--dsw-alias-brand-primary) 5%,var(--dsw-alias-bg-overlay))}
-.pl-ledger-module:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:-2px;z-index:1}
-.pl-ledger-module-top{display:flex;align-items:center;gap:5px;min-width:0;color:var(--dsw-alias-label-secondary)}
-.pl-ledger-module-icon{display:inline-flex;color:var(--dsw-alias-label-secondary);flex:0 0 auto}
-.pl-ledger-module.is-brand .pl-ledger-module-icon{color:var(--dsw-alias-brand-primary)}
-.pl-ledger-module.is-warm .pl-ledger-module-icon{color:var(--dsw-alias-state-warn-primary)}
-.pl-ledger-module.is-success .pl-ledger-module-icon{color:var(--dsw-alias-state-success-primary)}
-.pl-ledger-module.is-error .pl-ledger-module-icon{color:var(--dsw-alias-state-error-primary)}
-.pl-ledger-module.is-loading .pl-ledger-module-icon{color:var(--dsw-alias-state-warn-primary)}
-.pl-ledger-module-label{font-size:8.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
-.pl-ledger-module-value{font-size:17px;line-height:1.1;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dsw-alias-label-primary)}
-.pl-ledger-module.is-brand .pl-ledger-module-value{color:var(--dsw-alias-brand-primary)}
-.pl-ledger-module.is-warm .pl-ledger-module-value{color:var(--dsw-alias-state-warn-primary)}
-.pl-ledger-module.is-success .pl-ledger-module-value{font-size:13px;color:var(--dsw-alias-state-success-primary)}
-.pl-ledger-module.is-error .pl-ledger-module-value{font-size:13px;color:var(--dsw-alias-state-error-primary)}
-.pl-ledger-module.is-loading .pl-ledger-module-value{font-size:12px;color:var(--dsw-alias-label-secondary)}
-.pl-ledger-module-sub{font-size:8px;color:var(--dsw-alias-label-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-ledger-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 13px;font-size:9px;color:var(--dsw-alias-label-secondary)}
-.pl-ledger-open{appearance:none;border:0;background:transparent;color:var(--dsw-alias-brand-primary);font:inherit;font-size:10px;display:inline-flex;align-items:center;gap:2px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap}
-.pl-ledger-open:hover{background:color-mix(in srgb,var(--dsw-alias-brand-primary) 8%,transparent)}
-.pl-ledger-open:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
-.pl-turn{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:5px 0 0;padding:1px 2px;border:0;border-radius:5px;background:transparent;font-size:9.5px;color:var(--dsw-alias-label-secondary);line-height:1.35;max-width:100%}
-.pl-turn:hover{background:color-mix(in srgb,var(--dsw-alias-bg-layer-2) 55%,transparent)}
-.pl-turn-title{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;color:var(--dsw-alias-label-secondary);flex:0 0 auto}
-.pl-turn-status{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;white-space:nowrap;flex:0 0 auto}
-.pl-turn-dot{width:4px;height:4px;border-radius:2px;background:var(--dsw-alias-state-idle-primary);flex:0 0 auto}
+.pl-ledger-center{position:relative;display:flex;justify-content:flex-start;align-items:center;width:min(100%,var(--dsh-chat-content-width,748px));margin:0 auto 4px;z-index:5;--pl-data:color-mix(in srgb,var(--dsw-alias-label-tertiary) 72%,var(--dsw-alias-label-primary) 28%)}
+.pl-dock{appearance:none;display:inline-flex;align-items:center;gap:6px;max-width:100%;height:26px;padding:0 6px;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:11.5px;line-height:1;cursor:pointer;transition:background .12s ease,color .12s ease}
+.pl-dock:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
+.pl-dock.is-open{background:var(--dsw-alias-interactive-bg-hover)}
+.pl-dock:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
+.pl-dock-mark{position:relative;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--dsw-alias-label-secondary);flex:0 0 auto}
+.pl-dock-mark svg{opacity:.8}
+.pl-dock-hint{position:absolute;top:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-state-warn-primary);box-shadow:0 0 0 2px var(--dsw-alias-bg-base)}
+.pl-dock-title{font-size:11.5px;font-weight:600;letter-spacing:.01em;color:var(--dsw-alias-label-secondary);white-space:nowrap}
+.pl-dock-divider{width:1px;height:10px;margin:0 1px;background:var(--dsw-alias-border-l2);flex:0 0 auto}
+.pl-dock-scope{font-size:11px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-dock-stat-inline{font-size:11.5px;color:var(--pl-data);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-dock-stat-inline.is-warm{color:var(--dsw-alias-state-warn-primary);font-weight:600}
+.pl-dock-dot{width:2px;height:2px;border-radius:50%;background:var(--dsw-alias-label-tertiary);opacity:.55;flex:0 0 auto}
+.pl-dock-chev{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:1px;border-radius:4px;color:var(--dsw-alias-label-tertiary);flex:0 0 auto}
+.pl-dock-panel{position:absolute;bottom:calc(100% + 10px);left:0;width:min(392px,calc(100vw - 28px));z-index:40;border:1px solid var(--dsw-alias-border-l2);border-radius:16px;background:var(--dsw-alias-bg-layer-1);box-shadow:0 20px 48px color-mix(in srgb,#000 24%,transparent),0 0 0 1px color-mix(in srgb,#fff 3%,transparent);overflow:hidden;animation:pl-dock-in .18s cubic-bezier(.2,.8,.2,1)}
+.pl-dock-head{display:flex;align-items:center;gap:9px;padding:11px 11px 10px 12px;border-bottom:1px solid var(--dsw-alias-border-l1);background:linear-gradient(180deg,var(--dsw-alias-interactive-bg-hover),transparent)}
+.pl-dock-head-mark{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--dsw-alias-label-primary) 6%,var(--dsw-alias-bg-layer-1));border:1px solid var(--dsw-alias-border-l1);flex:0 0 auto}
+.pl-dock-heading{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto}
+.pl-dock-heading strong{font-size:13px;font-weight:650;letter-spacing:.01em;color:var(--dsw-alias-label-primary)}
+.pl-dock-heading span{font-size:11px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-dock-chain{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-label-primary) 7%,transparent);color:var(--dsw-alias-label-tertiary);font-size:10.5px;white-space:nowrap;flex:0 0 auto}
+.pl-dock-chain-dot{width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-state-idle-primary);flex:0 0 auto}
+.pl-dock-chain.is-success{color:var(--dsw-alias-state-success-primary);background:color-mix(in srgb,var(--dsw-alias-state-success-primary) 10%,transparent)}
+.pl-dock-chain.is-success .pl-dock-chain-dot{background:var(--dsw-alias-state-success-primary)}
+.pl-dock-chain.is-error{color:var(--dsw-alias-state-error-primary);background:color-mix(in srgb,var(--dsw-alias-state-error-primary) 10%,transparent)}
+.pl-dock-chain.is-error .pl-dock-chain-dot{background:var(--dsw-alias-state-error-primary)}
+.pl-dock-chain.is-loading .pl-dock-chain-dot{background:var(--dsw-alias-state-warn-primary)}
+.pl-dock-close{appearance:none;border:0;width:26px;height:26px;border-radius:7px;background:transparent;color:var(--dsw-alias-label-tertiary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.pl-dock-close:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
+.pl-dock-close:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
+.pl-dock-hero{appearance:none;display:block;width:100%;padding:13px 14px 12px;border:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:background .12s ease}
+.pl-dock-hero:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.pl-dock-hero:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:-2px}
+.pl-dock-hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.pl-dock-hero-label{font-size:11px;letter-spacing:.03em;color:var(--dsw-alias-label-tertiary)}
+.pl-dock-hero-cache{font-size:10.5px;color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums}
+.pl-dock-hero-figure{display:flex;align-items:baseline;gap:6px;min-width:0}
+.pl-dock-hero-figure strong{font-size:27px;line-height:1.05;font-weight:650;letter-spacing:-.03em;color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums}
+.pl-dock-hero-unit{font-size:11px;letter-spacing:.02em;color:var(--dsw-alias-label-tertiary)}
+.pl-dock-meter{display:block;height:4px;margin-top:10px;border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-label-primary) 12%,transparent);overflow:hidden}
+.pl-dock-meter-fill{display:block;height:100%;border-radius:inherit;background:var(--dsw-alias-label-secondary);opacity:.75}
+.pl-dock-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--dsw-alias-border-l1)}
+.pl-dock-stat{appearance:none;min-width:0;padding:10px 11px 11px;border:0;border-right:1px solid var(--dsw-alias-border-l1);background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:background .12s ease}
+.pl-dock-stat:last-child{border-right:0}
+.pl-dock-stat:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.pl-dock-stat:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:-2px;z-index:1}
+.pl-dock-stat-label{display:block;font-size:10.5px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-dock-stat-value{display:block;margin-top:2px;font-size:16px;line-height:1.2;font-weight:650;color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-dock-stat-sub{display:block;margin-top:2px;font-size:10.5px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-dock-rate{appearance:none;display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:0;border-top:1px solid var(--dsw-alias-border-l1);background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer;transition:background .12s ease}
+.pl-dock-rate:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.pl-dock-rate:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:-2px}
+.pl-dock-rate-label{font-size:11px;color:var(--dsw-alias-label-tertiary);white-space:nowrap}
+.pl-dock-rate-stars{display:inline-flex;align-items:center;gap:0;color:var(--dsw-alias-state-warn-primary)}
+.pl-dock-rate-stars .pl-stars{gap:0}
+.pl-dock-rate-stars .pl-stars>span{padding:2px}
+.pl-dock-rate-empty{font-size:10.5px;color:var(--dsw-alias-label-tertiary)}
+.pl-dock-rate-score{font-size:11.5px;font-weight:650;color:var(--dsw-alias-state-warn-primary);font-variant-numeric:tabular-nums}
+.pl-dock-rate-count{margin-left:auto;font-size:10.5px;color:var(--dsw-alias-label-tertiary);white-space:nowrap}
+.pl-dock-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px 8px 14px;border-top:1px solid var(--dsw-alias-border-l1);background:color-mix(in srgb,var(--dsw-alias-bg-base) 38%,transparent)}
+.pl-dock-foot-note{min-width:0;font-size:10.5px;color:var(--dsw-alias-label-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-dock-open{appearance:none;display:inline-flex;align-items:center;gap:3px;height:24px;padding:0 6px;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;flex:0 0 auto;transition:background .12s ease,color .12s ease}
+.pl-dock-open:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
+.pl-dock-open:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
+.pl-turn{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:100%;min-height:32px;margin:6px 0 0;padding:5px 7px 5px 6px;border:1px solid transparent;border-radius:10px;background:transparent;--pl-data:color-mix(in srgb,var(--dsw-alias-label-tertiary) 72%,var(--dsw-alias-label-primary) 28%);font-size:calc(var(--dsh-content-font-size-secondary,13px) - 1px);line-height:18px;color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums;transition:background .15s ease,border-color .15s ease}
+.pl-turn:hover{background:var(--dsw-alias-interactive-bg-hover);border-color:var(--dsw-alias-border-l1)}
+.pl-turn-lead{display:inline-flex;align-items:center;gap:6px;min-width:0;flex:0 0 auto}
+.pl-turn-mark{width:20px;height:20px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--dsw-alias-label-primary) 6%,var(--dsw-alias-bg-layer-1));border:1px solid var(--dsw-alias-border-l1);color:var(--dsw-alias-label-secondary);flex:0 0 auto}
+.pl-turn-name{font-size:12.5px;font-weight:600;letter-spacing:.01em;color:var(--dsw-alias-label-secondary);white-space:nowrap}
+.pl-turn-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--pl-data);white-space:nowrap}
+.pl-turn-dot{width:5px;height:5px;border-radius:50%;background:var(--dsw-alias-state-idle-primary);flex:0 0 auto}
 .pl-turn-status.is-completed .pl-turn-dot{background:var(--dsw-alias-state-success-primary)}
 .pl-turn-status.is-failed .pl-turn-dot,.pl-turn-status.is-aborted .pl-turn-dot{background:var(--dsw-alias-state-error-primary)}
 .pl-turn-status.is-running .pl-turn-dot{background:var(--dsw-alias-brand-primary)}
 .pl-turn-status.is-interrupted .pl-turn-dot{background:var(--dsw-alias-state-warn-primary)}
-.pl-turn-meta{display:inline-flex;align-items:center;gap:5px;min-width:0;overflow:hidden;white-space:nowrap;font-variant-numeric:tabular-nums}
-.pl-turn-model{max-width:200px;overflow:hidden;text-overflow:ellipsis}
-.pl-turn-sep{opacity:.4}
-.pl-turn-auto{color:var(--dsw-alias-brand-primary);font-size:9px;white-space:nowrap}
-.pl-turn-rating{display:inline-flex;align-items:center;gap:2px;flex:0 0 auto;min-height:17px}
-.pl-turn-rating .pl-stars>button{opacity:.3}
-.pl-turn-rating .pl-stars>button.is-on,.pl-turn-rating .pl-stars>button:hover{opacity:1}
-.pl-turn-error{color:var(--dsw-alias-state-error-primary);font-size:9px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pl-turn-detail{appearance:none;border:0;background:transparent;color:var(--dsw-alias-brand-primary);font:inherit;font-size:9.5px;display:inline-flex;align-items:center;gap:1px;padding:1px 2px;border-radius:3px;cursor:pointer;flex:0 0 auto;opacity:.85}
-.pl-turn:hover .pl-turn-detail{opacity:1}
-.pl-turn-detail:hover{text-decoration:underline;text-underline-offset:2px}
+.pl-turn-meta{display:inline-flex;align-items:center;gap:7px;min-width:0;overflow:hidden;white-space:nowrap;font-size:12px;color:var(--pl-data)}
+.pl-turn-model{max-width:210px;overflow:hidden;text-overflow:ellipsis;color:var(--dsw-alias-label-secondary);font-weight:500}
+.pl-turn-sep{display:inline-block;width:2px;height:2px;border-radius:50%;background:currentColor;opacity:.45;flex:0 0 auto}
+.pl-turn-auto{display:inline-flex;align-items:center;gap:4px;height:21px;padding:0 7px 0 5px;border:1px solid var(--dsw-alias-border-l1);border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-label-primary) 4%,transparent);font-size:11px;line-height:1;color:var(--pl-data);white-space:nowrap;flex:0 0 auto}
+.pl-turn-auto svg{opacity:.65}
+.pl-turn-auto strong{font-size:11px;font-weight:650;color:var(--dsw-alias-label-secondary)}
+.pl-turn-actions{margin-left:auto;display:inline-flex;align-items:center;gap:8px;flex:0 0 auto}
+.pl-turn-rate{display:inline-flex;align-items:center;gap:5px}
+.pl-turn-score{min-width:18px;text-align:right;font-size:12px;font-weight:650;color:var(--dsw-alias-state-warn-primary)}
+.pl-turn-hint{font-size:11px;color:var(--dsw-alias-label-tertiary);white-space:nowrap}
+.pl-turn-divider{width:1px;height:13px;background:var(--dsw-alias-border-l2);flex:0 0 auto}
+.pl-turn .pl-stars{gap:0;color:var(--dsw-alias-state-warn-primary)}
+.pl-turn .pl-stars>button{padding:3px;border-radius:5px;opacity:.26;transition:opacity .12s ease,transform .12s ease}
+.pl-turn .pl-stars>button.is-on{opacity:1}
+.pl-turn .pl-stars>button:hover{opacity:1;transform:translateY(-1px)}
+.pl-turn-detail{appearance:none;display:inline-flex;align-items:center;gap:3px;height:24px;padding:0 6px;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex:0 0 auto;transition:background .12s ease,color .12s ease}
+.pl-turn-detail svg{opacity:.55;transition:transform .12s ease,opacity .12s ease}
+.pl-turn-detail:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
+.pl-turn-detail:hover svg{opacity:1;transform:translateX(1px)}
 .pl-turn-detail:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}
+.pl-turn-error{flex-basis:100%;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:var(--dsw-alias-state-error-primary)}
 .pl-skel{display:flex;flex-direction:column;gap:7px}
 .pl-skel-row{height:42px;border-radius:9px;border:1px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-layer-1);animation:pl-pulse 1.4s ease-in-out infinite}
 .pl-toast{position:fixed;right:26px;bottom:26px;z-index:50;display:flex;align-items:center;gap:7px;max-width:420px;padding:9px 12px;border-radius:9px;border:1px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-overlay);color:var(--dsw-alias-label-primary);font-size:11px;box-shadow:0 8px 28px color-mix(in srgb,#000 18%,transparent);animation:pl-toast-in .18s ease}
@@ -3176,7 +4575,7 @@ window.__ModuleLoader__.load({
 @keyframes pl-rotate{to{transform:rotate(360deg)}}
 @keyframes pl-fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
 @keyframes pl-toast-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-@keyframes pl-ledger-in{from{opacity:0;transform:translate(-50%,5px) scale(.985)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+@keyframes pl-dock-in{from{opacity:0;transform:translateY(6px) scale(.99)}to{opacity:1;transform:none}}
 @media (max-width:1060px){
   .pl-kpis,.pl-analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pl-overview-grid,.pl-two-col,.pl-two-col.is-wide-left{grid-template-columns:1fr}
@@ -3192,13 +4591,12 @@ window.__ModuleLoader__.load({
   .pl-brand h1{font-size:16px}
   .pl-brand p{display:none}
   .pl-local-pill{display:none}
-  .pl-ledger-panel{width:calc(100vw - 24px)}
-  .pl-ledger-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .pl-ledger-pill-title{display:none}
-  .pl-ledger-pill-stat.is-tokens{display:none}
-  .pl-ledger-pill{padding-right:8px}
-  .pl-turn-meta{flex-basis:100%;order:5}
-  .pl-turn-model{max-width:150px}
+  .pl-dock-panel{width:calc(100vw - 20px)}
+  .pl-dock-title{display:none}
+  .pl-dock{padding-right:6px}
+  .pl-turn-meta{flex-basis:100%;order:4;padding-left:26px}
+  .pl-turn-actions{margin-left:0;order:5;flex-basis:100%;padding-left:26px}
+  .pl-turn-model{max-width:160px}
   .pl-search{max-width:none;flex-basis:100%}
   .pl-metrics-grid,.pl-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pl-review-grid{grid-template-columns:1fr}
@@ -3210,10 +4608,21 @@ window.__ModuleLoader__.load({
   .pl-foot-path{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .pl-view,.pl-toast,.pl-skel-row,.pl-spin,.pl-ledger-panel{animation:none}
+  .pl-view,.pl-toast,.pl-skel-row,.pl-spin,.pl-dock-panel{animation:none}
   .pl-prompt-row,.pl-mini-bar>span,.pl-stars>button,.pl-switch,.pl-switch-thumb{transition:none}
 }
 `;
+
+    function installStyles() {
+      if (typeof document === 'undefined' || document.head === null || document.head === undefined) return;
+      let style = document.getElementById('prompt-ledger-styles');
+      if (style === null) {
+        style = document.createElement('style');
+        style.id = 'prompt-ledger-styles';
+        document.head.appendChild(style);
+      }
+      if (style.textContent !== CSS) style.textContent = CSS;
+    }
 
     /* ------------------------------------------------------------------ */
     /* Client plugin                                                       */
@@ -3222,6 +4631,7 @@ window.__ModuleLoader__.load({
     return {
       inject: ['slots', 'locale', 'layout'],
       apply(ctx) {
+        installStyles();
         ctx.effect(() => ctx.locale.register(NS, 'zh', ZH), 'prompt-ledger: zh dictionary');
         ctx.effect(() => ctx.locale.register(NS, 'en', EN), 'prompt-ledger: en dictionary');
         const t = ctx.locale.bind(NS);

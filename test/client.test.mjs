@@ -29,6 +29,24 @@ test('registers the sidebar, composer dock, turn footer and main panel', () => {
   const registrations = [];
   const window = { __ModuleLoader__: { load(definition) { globalThis.__promptLedgerDefinition = definition; } } };
   globalThis.window = window;
+  const appendedStyles = [];
+  const styleById = new Map();
+  globalThis.document = {
+    getElementById(id) {
+      return styleById.get(id) ?? null;
+    },
+    createElement(tag) {
+      return { tagName: tag, id: '', textContent: '', parentNode: null };
+    },
+    head: {
+      appendChild(node) {
+        appendedStyles.push(node);
+        node.parentNode = this;
+        styleById.set(node.id, node);
+        return node;
+      },
+    },
+  };
 
   const source = readFileSync(join(ROOT, 'client.js'), 'utf8');
   const evaluate = new Function('window', 'require', source);
@@ -74,11 +92,21 @@ test('registers the sidebar, composer dock, turn footer and main panel', () => {
     throw new Error(`unexpected require: ${id}`);
   }).apply(ctx);
 
+  assert.equal(appendedStyles.length, 1, 'installs one plugin style sheet at apply time');
+  assert.equal(appendedStyles[0].id, 'prompt-ledger-styles');
+  assert.match(appendedStyles[0].textContent, /\.pl-turn\{/);
+  assert.match(appendedStyles[0].textContent, /\.pl-dock-panel\{/);
+  assert.match(appendedStyles[0].textContent, /\.pl-actions\{/);
+  assert.match(appendedStyles[0].textContent, /\.pl-action-item\{/);
+  assert.match(appendedStyles[0].textContent, /\.pl-map\{/);
+  assert.match(appendedStyles[0].textContent, /\.pl-result\{/);
+
   assert.deepEqual(registrations.map((entry) => `${entry.name}:${entry.id ?? entry.key}`), [
     'sidebar.panellist:prompt-ledger',
     'conversation.input.dock:prompt-ledger',
     'conversation.chat.turnTail:prompt-ledger',
     'main:prompt-ledger',
   ]);
+  delete globalThis.document;
   delete globalThis.window;
 });

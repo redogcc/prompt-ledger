@@ -22,6 +22,8 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
+import { aggregateFiles, describeAction, redactSecrets, summarizeActions } from './actions.js';
+
 export const SCHEMA_VERSION = 1;
 export const GENESIS_HASH = '0'.repeat(64);
 
@@ -444,6 +446,34 @@ CREATE UNIQUE INDEX IF NOT EXISTS tool_invocations_call
   ON tool_invocations(prompt_id, call_id) WHERE call_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS tool_invocations_prompt ON tool_invocations(prompt_id);
 
+CREATE TABLE IF NOT EXISTS action_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  prompt_id TEXT NOT NULL,
+  call_id TEXT,
+  parent_call_id TEXT,
+  root_call_id TEXT,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'tool',
+  kind TEXT NOT NULL DEFAULT 'other',
+  title_zh TEXT NOT NULL DEFAULT '',
+  title_en TEXT NOT NULL DEFAULT '',
+  targets_json TEXT NOT NULL DEFAULT '[]',
+  detail_json TEXT NOT NULL DEFAULT '{}',
+  args_excerpt TEXT,
+  args_hash TEXT,
+  result_excerpt TEXT,
+  status TEXT NOT NULL DEFAULT 'running',
+  error_text TEXT,
+  started_at INTEGER,
+  ended_at INTEGER,
+  seq INTEGER,
+  hidden INTEGER NOT NULL DEFAULT 0,
+  meta_json TEXT NOT NULL DEFAULT '{}'
+);
+CREATE UNIQUE INDEX IF NOT EXISTS action_events_call
+  ON action_events(prompt_id, call_id) WHERE call_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS action_events_prompt ON action_events(prompt_id);
+
 CREATE TABLE IF NOT EXISTS prompt_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   prompt_id TEXT,
@@ -557,6 +587,15 @@ BEGIN SELECT RAISE(ABORT, 'tool invocation is sealed'); END;
 CREATE TRIGGER IF NOT EXISTS tools_no_delete
 BEFORE DELETE ON tool_invocations
 BEGIN SELECT RAISE(ABORT, 'tool invocations are append-only'); END;
+
+CREATE TRIGGER IF NOT EXISTS actions_no_update_after_seal
+BEFORE UPDATE ON action_events
+WHEN (SELECT sealed FROM prompts WHERE id = OLD.prompt_id) = 1
+BEGIN SELECT RAISE(ABORT, 'action event is sealed'); END;
+
+CREATE TRIGGER IF NOT EXISTS actions_no_delete
+BEFORE DELETE ON action_events
+BEGIN SELECT RAISE(ABORT, 'action events are append-only'); END;
 `;
 
 export class Ledger {
@@ -1022,6 +1061,127 @@ export class Ledger {
         error: errorText === null ? null : clip(errorText, 2_000),
         resultHash: sha256(resultText),
         result: resultText,
+      }, at);
+    });
+  }
+
+  /**
+   * Record a user-facing action. Nested run_code / PTC calls, direct tool calls
+   * and adapter-provided actions all land here; run_code itself is hidden so
+   * the timeline shows the actual reads, edits, commands and deliveries.
+   */
+  recordActionStart(promptId, input = {}) {
+    if (promptId === null || promptId === undefined || this.isSealed(promptId)) return;
+    const name = String(input.name ?? 'unknown');
+    const rawArguments = typeof input.arguments === 'string'
+      ? input.arguments
+      : canonicalJson(input.arguments ?? null);
+    const at = toMs(input.at);
+    const prompt = this.#promptRow(promptId);
+    if (prompt === undefined || prompt.sealed === 1) return;
+    const action = describeAction(name, rawArguments, { cwd: input.cwd ?? prompt.cwd ?? '' });
+    const callId = input.callId ?? null;
+    const hidden = input.hidden === true || action.hidden === true;
+    const argsExcerpt = clip(redactSecrets(rawArguments), 8_000);
+    this.#tx(() => {
+      const row = this.#promptRow(promptId);
+      if (row === undefined || row.sealed === 1) return;
+      const existing = callId === null
+        ? undefined
+        : this.#db.prepare('SELECT id FROM action_events WHERE prompt_id = ? AND call_id = ?').get(promptId, callId);
+      if (existing !== undefined) {
+        this.#db.prepare(
+          "UPDATE action_events SET "
+          + "name = ?, category = ?, kind = ?, title_zh = ?, title_en = ?, "
+          + "targets_json = ?, detail_json = ?, args_excerpt = ?, args_hash = ?, "
+          + "started_at = ?, hidden = ?, meta_json = ? "
+          + "WHERE id = ?"
+        ).run(
+          name, action.category, action.kind, action.titleZh, action.titleEn,
+          JSON.stringify(action.targets), JSON.stringify(action.detail),
+          argsExcerpt, sha256(rawArguments), at, hidden ? 1 : 0,
+          JSON.stringify(input.meta ?? {}), existing.id,
+        );
+        return;
+      }
+      this.#db.prepare(
+        "INSERT INTO action_events ("
+        + "prompt_id, call_id, parent_call_id, root_call_id, name, category, kind, "
+        + "title_zh, title_en, targets_json, detail_json, args_excerpt, args_hash, "
+        + "started_at, seq, hidden, meta_json"
+        + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      ).run(
+        promptId, callId, input.parentCallId ?? null, input.rootCallId ?? null,
+        name, action.category, action.kind, action.titleZh, action.titleEn,
+        JSON.stringify(action.targets), JSON.stringify(action.detail),
+        argsExcerpt, sha256(rawArguments), at,
+        Number.isFinite(input.seq) ? Math.trunc(input.seq) : null,
+        hidden ? 1 : 0, JSON.stringify(input.meta ?? {}),
+      );
+      this.#appendEvent(promptId, 'action.call', {
+        at,
+        seq: input.seq ?? null,
+        callId,
+        parentCallId: input.parentCallId ?? null,
+        rootCallId: input.rootCallId ?? null,
+        name,
+        kind: action.kind,
+        targets: action.targets,
+      }, at);
+    });
+  }
+
+  recordActionResult(promptId, input = {}) {
+    if (promptId === null || promptId === undefined || this.isSealed(promptId)) return;
+    const callId = input.callId ?? null;
+    if (callId !== null) {
+      const existing = this.#db.prepare('SELECT id FROM action_events WHERE prompt_id = ? AND call_id = ?').get(promptId, callId);
+      if (existing === undefined && typeof input.name === 'string') {
+        this.recordActionStart(promptId, {
+          at: input.at,
+          seq: input.seq,
+          callId,
+          name: input.name,
+          arguments: input.arguments ?? {},
+        });
+      }
+    }
+    const at = toMs(input.at);
+    const resultText = clip(
+      typeof input.result === 'string' ? input.result : canonicalJson(input.result ?? null),
+      20_000,
+    );
+    const errorText = input.error === undefined || input.error === null
+      ? null
+      : typeof input.error === 'string'
+        ? input.error
+        : canonicalJson(input.error);
+    const failed = input.isError === true
+      || errorText !== null
+      || input.status === 'error';
+    this.#tx(() => {
+      const row = this.#promptRow(promptId);
+      if (row === undefined || row.sealed === 1) return;
+      const updated = this.#db.prepare(
+        "UPDATE action_events SET "
+        + "ended_at = ?, status = ?, error_text = ?, result_excerpt = ? "
+        + "WHERE prompt_id = ? AND call_id = ?"
+      ).run(
+        at,
+        failed ? 'error' : 'ok',
+        errorText === null ? null : clip(redactSecrets(errorText), 2_000),
+        clip(redactSecrets(resultText), 8_000),
+        promptId,
+        callId,
+      );
+      if (Number(updated.changes ?? 0) === 0) return;
+      this.#appendEvent(promptId, 'action.result', {
+        at,
+        seq: input.seq ?? null,
+        callId,
+        status: failed ? 'error' : 'ok',
+        error: errorText === null ? null : clip(redactSecrets(errorText), 2_000),
+        resultHash: sha256(resultText),
       }, at);
     });
   }
@@ -1542,6 +1702,40 @@ export class Ledger {
       result: tool.result_excerpt,
       seq: tool.seq,
     }));
+    item.actions = this.#db.prepare(
+      "SELECT id, call_id, parent_call_id, root_call_id, name, category, kind, "
+      + "title_zh, title_en, targets_json, detail_json, args_excerpt, args_hash, "
+      + "result_excerpt, status, error_text, started_at, ended_at, seq, hidden, meta_json "
+      + "FROM action_events WHERE prompt_id = ? ORDER BY COALESCE(seq, 0) ASC, id ASC"
+    ).all(id).map((action) => ({
+      id: action.id,
+      callId: action.call_id,
+      parentCallId: action.parent_call_id,
+      rootCallId: action.root_call_id,
+      name: action.name,
+      category: action.category,
+      kind: action.kind,
+      titleZh: action.title_zh,
+      titleEn: action.title_en,
+      targets: parseJson(action.targets_json, []),
+      detail: parseJson(action.detail_json, {}),
+      arguments: action.args_excerpt,
+      argsHash: action.args_hash,
+      result: action.result_excerpt,
+      status: action.status,
+      error: action.error_text,
+      startedAt: action.started_at,
+      endedAt: action.ended_at,
+      seq: action.seq,
+      hidden: action.hidden === 1,
+      temporary: Array.isArray(parseJson(action.targets_json, []))
+        && parseJson(action.targets_json, []).length > 0
+        && parseJson(action.targets_json, []).every((target) => target?.temporary === true),
+      meta: parseJson(action.meta_json, {}),
+    })).filter((action) => action.hidden !== true && action.temporary !== true);
+    item.actionSummary = summarizeActions(item.actions);
+    item.files = aggregateFiles(item.actions);
+
     item.evaluations = this.#db.prepare(`
       SELECT id, source, evaluator, model, total, dimensions_json, notes, rubric_version, created_at
       FROM prompt_evaluations WHERE prompt_id = ? ORDER BY id DESC
@@ -1568,6 +1762,187 @@ export class Ledger {
       hash: event.hash,
     }));
     return item;
+  }
+
+  promptIdForSourceKey(sourceKey) {
+    if (typeof sourceKey !== 'string' || sourceKey === '') return null;
+    const row = this.#db.prepare('SELECT id FROM prompts WHERE source_key = ?').get(sourceKey);
+    return row?.id ?? null;
+  }
+
+  promptIdForSessionSeq(sessionId, seq) {
+    if (typeof sessionId !== 'string' || !Number.isFinite(Number(seq))) return null;
+    const row = this.#db.prepare('SELECT id FROM prompts WHERE session_id = ? AND source_seq = ? ORDER BY created_at ASC LIMIT 1').get(sessionId, Math.trunc(Number(seq)));
+    return row?.id ?? null;
+  }
+
+  /**
+   * Import completed actions for a prompt, including sealed historical prompts.
+   * This is the backfill path: it never updates the prompt row, is idempotent by
+   * callId, and appends an action.backfill event per inserted action.
+   */
+  importActions(promptId, items = []) {
+    const prompt = this.#promptRow(promptId);
+    if (prompt === undefined || !Array.isArray(items)) return { inserted: 0, skipped: 0 };
+    const cwd = prompt.cwd ?? '';
+    const result = { inserted: 0, skipped: 0 };
+    this.#tx(() => {
+      for (const item of items) {
+        if (item === null || typeof item !== 'object') continue;
+        const name = String(item.name ?? 'unknown');
+        const rawArguments = typeof item.arguments === 'string'
+          ? item.arguments
+          : canonicalJson(item.arguments ?? null);
+        const callId = typeof item.callId === 'string' && item.callId !== ''
+          ? item.callId
+          : 'bf:' + sha256(promptId + '\\n' + name + '\\n' + (item.seq ?? '') + '\\n' + (item.startedAt ?? '') + '\\n' + rawArguments);
+        const existing = this.#db.prepare('SELECT id FROM action_events WHERE prompt_id = ? AND call_id = ?').get(promptId, callId);
+        if (existing !== undefined) {
+          result.skipped += 1;
+          continue;
+        }
+        const action = describeAction(name, rawArguments, { cwd });
+        const at = toMs(item.startedAt ?? Date.now());
+        const ended = item.endedAt === undefined || item.endedAt === null ? null : toMs(item.endedAt);
+        const failed = item.status === 'error' || item.isError === true;
+        const status = item.status ?? (ended === null ? 'running' : (failed ? 'error' : 'ok'));
+        const resultText = item.result === undefined || item.result === null
+          ? ''
+          : (typeof item.result === 'string' ? item.result : canonicalJson(item.result));
+        const errorText = item.error === undefined || item.error === null
+          ? null
+          : (typeof item.error === 'string' ? item.error : canonicalJson(item.error));
+        const hidden = item.hidden === true || action.hidden === true;
+        this.#db.prepare(
+          "INSERT INTO action_events ("
+          + "prompt_id, call_id, parent_call_id, root_call_id, name, category, kind, "
+          + "title_zh, title_en, targets_json, detail_json, args_excerpt, args_hash, "
+          + "result_excerpt, status, error_text, started_at, ended_at, seq, hidden, meta_json"
+          + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        ).run(
+          promptId, callId, item.parentCallId ?? null, item.rootCallId ?? null,
+          name, action.category, action.kind, action.titleZh, action.titleEn,
+          JSON.stringify(action.targets), JSON.stringify(action.detail),
+          clip(redactSecrets(rawArguments), 8_000), sha256(rawArguments),
+          resultText === '' ? null : clip(redactSecrets(resultText), 8_000),
+          status, errorText === null ? null : clip(redactSecrets(errorText), 2_000),
+          at, ended, Number.isFinite(item.seq) ? Math.trunc(item.seq) : null,
+          hidden ? 1 : 0,
+          JSON.stringify({ ...(item.meta ?? {}), transport: 'backfill' }),
+        );
+        this.#appendEvent(promptId, 'action.backfill', {
+          at,
+          seq: item.seq ?? null,
+          callId,
+          name,
+          kind: action.kind,
+          status,
+          targets: action.targets,
+        }, at);
+        result.inserted += 1;
+      }
+    });
+    return result;
+  }
+
+  sessions(limit = 20) {
+    const rows = this.#db.prepare(
+      "SELECT p.session_id, COUNT(DISTINCT p.id) AS prompts, MIN(p.created_at) AS first_at, MAX(p.created_at) AS last_at "
+      + "FROM prompts p WHERE p.session_id IS NOT NULL AND p.session_id <> '' "
+      + "GROUP BY p.session_id ORDER BY last_at DESC LIMIT ?"
+    ).all(Math.min(100, Math.max(1, Number(limit) || 20)));
+    return rows.map((row) => {
+      const latest = this.#db.prepare(
+        "SELECT turn, prompt_text, model, meta_json, created_at FROM prompts WHERE session_id = ? ORDER BY created_at DESC LIMIT 1"
+      ).get(row.session_id);
+      const count = this.#db.prepare(
+        "SELECT COUNT(*) AS n FROM action_events a JOIN prompts p ON p.id = a.prompt_id WHERE p.session_id = ? AND a.hidden = 0"
+      ).get(row.session_id);
+      const meta = parseJson(latest?.meta_json, {});
+      return {
+        sessionId: row.session_id,
+        promptCount: Number(row.prompts) || 0,
+        actionCount: Number(count?.n) || 0,
+        firstAt: row.first_at,
+        lastAt: row.last_at,
+        title: typeof meta.title === 'string' && meta.title !== '' ? meta.title : null,
+        lastPrompt: clip(String(latest?.prompt_text ?? '').replaceAll('\\n', ' '), 120),
+        model: latest?.model ?? null,
+      };
+    });
+  }
+
+  sessionActions(sessionId, limit = 2000) {
+    if (typeof sessionId !== 'string' || sessionId === '') return null;
+    const promptRows = this.#db.prepare(
+      "SELECT id, turn, prompt_text, assistant_text, created_at, model, status, meta_json FROM prompts WHERE session_id = ? ORDER BY created_at ASC"
+    ).all(sessionId);
+    if (promptRows.length === 0) return null;
+    const rows = this.#db.prepare(
+      "SELECT a.*, p.turn, p.created_at AS prompt_created_at FROM action_events a "
+      + "JOIN prompts p ON p.id = a.prompt_id "
+      + "WHERE p.session_id = ? AND a.hidden = 0 "
+      + "ORDER BY p.created_at ASC, COALESCE(a.seq, 0) ASC, a.id ASC LIMIT ?"
+    ).all(sessionId, Math.min(5000, Math.max(1, Number(limit) || 500)));
+    const actionsByPrompt = new Map();
+    for (const action of rows) {
+      const targets = parseJson(action.targets_json, []);
+      const temporary = targets.length > 0 && targets.every((target) => target?.temporary === true);
+      if (temporary) continue;
+      const item = {
+        id: action.id,
+        callId: action.call_id,
+        parentCallId: action.parent_call_id,
+        rootCallId: action.root_call_id,
+        name: action.name,
+        category: action.category,
+        kind: action.kind,
+        titleZh: action.title_zh,
+        titleEn: action.title_en,
+        targets,
+        detail: parseJson(action.detail_json, {}),
+        arguments: action.args_excerpt,
+        argsHash: action.args_hash,
+        result: action.result_excerpt,
+        status: action.status,
+        error: action.error_text,
+        startedAt: action.started_at,
+        endedAt: action.ended_at,
+        seq: action.seq,
+        meta: parseJson(action.meta_json, {}),
+      };
+      const list = actionsByPrompt.get(action.prompt_id) ?? [];
+      list.push(item);
+      actionsByPrompt.set(action.prompt_id, list);
+    }
+    const allActions = [];
+    const turns = promptRows.map((prompt) => {
+      const actions = actionsByPrompt.get(prompt.id) ?? [];
+      allActions.push(...actions);
+      const meta = parseJson(prompt.meta_json, {});
+      return {
+        promptId: prompt.id,
+        turn: prompt.turn,
+        prompt: String(prompt.prompt_text ?? '').replaceAll('\\n', ' ').slice(0, 240),
+        response: String(prompt.assistant_text ?? ''),
+        title: typeof meta.title === 'string' && meta.title !== '' ? meta.title : null,
+        createdAt: prompt.created_at,
+        model: prompt.model,
+        status: prompt.status,
+        actions,
+        summary: summarizeActions(actions),
+        files: aggregateFiles(actions),
+      };
+    });
+    return {
+      sessionId,
+      promptCount: promptRows.length,
+      firstAt: promptRows[0]?.created_at ?? null,
+      lastAt: promptRows[promptRows.length - 1]?.created_at ?? null,
+      summary: summarizeActions(allActions),
+      files: aggregateFiles(allActions),
+      turns: turns.filter((turn) => turn.actions.length > 0),
+    };
   }
 
   /* ---------------------------------------------------------------------- */

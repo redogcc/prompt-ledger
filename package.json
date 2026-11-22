@@ -1,6 +1,6 @@
 {
   "name": "@local/prompt-ledger",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "提示词账本：DeepSeek Harness 本地提示词全生命周期管理插件，自动采集提示词、模型、Token、工具、Skill/MCP 调用，支持五星复盘、双评闭环、SQLite 审计链与多维报表。",
@@ -8,6 +8,7 @@
     ".": "./index.js",
     "./client": "./client.js",
     "./ledger": "./ledger.js",
+    "./actions": "./actions.js",
     "./mcp": "./adapters/mcp-server.mjs",
     "./cli": "./adapters/cli.mjs",
     "./locale/*.json": "./locale/*.json",
@@ -17,6 +18,7 @@
     "index.js",
     "client.js",
     "ledger.js",
+    "actions.js",
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",

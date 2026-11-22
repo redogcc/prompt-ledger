@@ -182,3 +182,50 @@ test('ingests external platform turns idempotently', (t) => {
   assert.ok(first.auto.total > 0);
   assert.equal(ledger.integrity().ok, true);
 });
+
+test('captures a plain-language action trace and aggregates files', (t) => {
+  const ledger = temporaryLedger(t, 'actions');
+  const cwd = '/repo';
+  const id = ledger.recordSubmission({ platform: 'dsh', sessionId: 's1', cwd, text: 'Fix the UI' });
+  ledger.recordActionStart(id, {
+    callId: 'read-1',
+    rootCallId: 'root-1',
+    name: 'read',
+    arguments: { file_path: '/repo/src/app.js' },
+    seq: 1,
+    at: Date.now(),
+  });
+  ledger.recordActionResult(id, { callId: 'read-1', result: 'content', seq: 2, at: Date.now() });
+  ledger.recordActionStart(id, {
+    callId: 'edit-1',
+    rootCallId: 'root-1',
+    name: 'edit',
+    arguments: { file_path: '/repo/src/app.js', old_string: 'a', new_string: 'b' },
+    seq: 3,
+    at: Date.now(),
+  });
+  ledger.recordActionResult(id, { callId: 'edit-1', result: 'Edited file', seq: 4, at: Date.now() });
+  ledger.recordActionStart(id, {
+    callId: 'cmd-1',
+    rootCallId: 'root-1',
+    name: 'bash',
+    arguments: { description: 'Run tests', command: 'npm test' },
+    seq: 5,
+    at: Date.now(),
+  });
+  ledger.recordActionResult(id, { callId: 'cmd-1', result: 'failed', isError: true, error: 'exit 1', seq: 6, at: Date.now() });
+
+  const prompt = ledger.getPrompt(id);
+  assert.equal(prompt.actions.length, 3);
+  assert.equal(prompt.actions[0].titleZh, '读取 src/app.js');
+  assert.equal(prompt.actions[1].titleZh, '修改 src/app.js');
+  assert.equal(prompt.actions[2].status, 'error');
+  assert.equal(prompt.actionSummary.total, 3);
+  assert.equal(prompt.actionSummary.files, 1);
+  assert.equal(prompt.actionSummary.errors, 1);
+  assert.equal(prompt.files[0].action, 'edit');
+  assert.equal(prompt.files[0].count, 2);
+  assert.ok(prompt.events.some((event) => event.kind === 'action.call'));
+  assert.equal(ledger.integrity().ok, true);
+});
+

@@ -381,6 +381,17 @@ class Capture {
           name: event.data?.name ?? 'unknown',
           arguments: event.data?.arguments ?? '',
         });
+        this.ledger.recordActionStart(tracker.promptId, {
+          at: event.time,
+          seq: event.seq,
+          callId: event.data?.callId ?? null,
+          parentCallId: null,
+          rootCallId: event.data?.callId ?? null,
+          name: event.data?.name ?? 'unknown',
+          arguments: event.data?.arguments ?? '',
+          hidden: (event.data?.name ?? '') === 'run_code',
+          meta: { transport: 'direct' },
+        });
         return;
       }
 
@@ -396,6 +407,49 @@ class Capture {
           result: extractText(message.content),
           isError: failed,
           error: resultError ?? (message.isError === true ? 'tool returned an error' : null),
+        });
+        this.ledger.recordActionResult(tracker.promptId, {
+          at: event.time,
+          seq: event.seq,
+          callId: message.toolCallId ?? null,
+          name: event.data?.name ?? null,
+          result: extractText(message.content),
+          isError: failed,
+          error: resultError ?? (message.isError === true ? 'tool returned an error' : null),
+        });
+        return;
+      }
+
+      if (event.type === 'tool/ptc-dispatch-start') {
+        const data = event.data ?? {};
+        this.ledger.recordActionStart(tracker.promptId, {
+          at: event.time,
+          seq: event.seq,
+          callId: data.subCallId ?? null,
+          parentCallId: data.parentCallId ?? null,
+          rootCallId: data.rootCallId ?? null,
+          name: data.name ?? 'unknown',
+          arguments: data.arguments ?? {},
+          meta: { transport: 'ptc' },
+        });
+        return;
+      }
+
+      if (event.type === 'tool/ptc-dispatch') {
+        const data = event.data ?? {};
+        const result = extractText(data.content);
+        const error = data.isError === true
+          ? (typeof data.meta?.error === 'string' ? data.meta.error : 'tool returned an error')
+          : null;
+        this.ledger.recordActionResult(tracker.promptId, {
+          at: event.time,
+          seq: event.seq,
+          callId: data.subCallId ?? null,
+          name: data.name ?? null,
+          arguments: data.arguments ?? {},
+          result,
+          isError: data.isError === true,
+          error,
         });
         return;
       }
@@ -482,6 +536,141 @@ class Capture {
 /* HTTP API                                                                    */
 /* -------------------------------------------------------------------------- */
 
+function findSession(ctx, sessionId) {
+  return ctx.sessions.list().find((session) => session.id === sessionId) ?? null;
+}
+
+/**
+ * Rebuild action traces for one historical Session from its durable event log.
+ * The collector pairs nested PTC starts/results and direct tool calls, then
+ * imports completed rows into the ledger. It is idempotent by callId, so a
+ * second run only skips existing actions.
+ */
+export function backfillSessionActions(ctx, ledger, sessionId) {
+  const session = findSession(ctx, sessionId);
+  if (session === null) return null;
+  const events = session.snapshotEvents();
+  let currentPromptId = null;
+  let active = new Map();
+  const stats = { sessionId, prompts: 0, inserted: 0, skipped: 0, actions: 0, unmapped: 0 };
+  const flush = () => {
+    if (currentPromptId === null || active.size === 0) {
+      active = new Map();
+      return;
+    }
+    const actions = [...active.values()];
+    const imported = ledger.importActions(currentPromptId, actions);
+    stats.prompts += 1;
+    stats.actions += actions.length;
+    stats.inserted += imported.inserted;
+    stats.skipped += imported.skipped;
+    active = new Map();
+  };
+  const ensure = (callId, input) => {
+    const key = callId ?? ('seq:' + input.seq + ':' + input.name);
+    let record = active.get(key);
+    if (record === undefined) {
+      record = {
+        callId: callId ?? null,
+        parentCallId: input.parentCallId ?? null,
+        rootCallId: input.rootCallId ?? null,
+        name: input.name ?? 'unknown',
+        arguments: input.arguments ?? {},
+        startedAt: input.startedAt ?? null,
+        endedAt: null,
+        status: 'running',
+        result: '',
+        error: null,
+        seq: input.seq ?? null,
+        hidden: input.hidden === true,
+      };
+      active.set(key, record);
+    } else if (input.arguments !== undefined) {
+      record.arguments = input.arguments;
+      record.name = input.name ?? record.name;
+    }
+    return record;
+  };
+  const finish = (callId, input) => {
+    if (callId === null || callId === undefined) return;
+    const record = ensure(callId, input);
+    record.endedAt = input.endedAt ?? Date.now();
+    record.status = input.isError === true ? 'error' : 'ok';
+    record.result = input.result ?? '';
+    record.error = input.error ?? null;
+  };
+  for (const event of events) {
+    if (event.type === 'user/message') {
+      flush();
+      const sourceKey = 'dsh:' + session.id + ':u:' + event.seq;
+      currentPromptId = ledger.promptIdForSourceKey(sourceKey) ?? ledger.promptIdForSessionSeq(session.id, event.seq);
+      if (currentPromptId === null) stats.unmapped += 1;
+      continue;
+    }
+    if (currentPromptId === null) continue;
+    if (event.type === 'tool/call') {
+      const data = event.data ?? {};
+      ensure(data.callId ?? null, {
+        name: data.name ?? 'unknown',
+        arguments: data.arguments ?? '',
+        rootCallId: data.callId ?? null,
+        parentCallId: null,
+        startedAt: event.time,
+        seq: event.seq,
+        hidden: (data.name ?? '') === 'run_code',
+      });
+      continue;
+    }
+    if (event.type === 'tool/ptc-dispatch-start') {
+      const data = event.data ?? {};
+      ensure(data.subCallId ?? null, {
+        name: data.name ?? 'unknown',
+        arguments: data.arguments ?? {},
+        rootCallId: data.rootCallId ?? null,
+        parentCallId: data.parentCallId ?? null,
+        startedAt: event.time,
+        seq: event.seq,
+      });
+      continue;
+    }
+    if (event.type === 'tool/ptc-dispatch') {
+      const data = event.data ?? {};
+      const result = extractText(data.content);
+      finish(data.subCallId ?? null, {
+        name: data.name ?? 'unknown',
+        arguments: data.arguments ?? {},
+        rootCallId: data.rootCallId ?? null,
+        parentCallId: data.parentCallId ?? null,
+        startedAt: event.time,
+        endedAt: event.time,
+        seq: event.seq,
+        result,
+        isError: data.isError === true,
+        error: data.isError === true ? (typeof data.meta?.error === 'string' ? data.meta.error : 'tool returned an error') : null,
+      });
+      continue;
+    }
+    if (event.type === 'tool/result') {
+      const message = event.data?.message ?? {};
+      finish(message.toolCallId ?? null, {
+        name: event.data?.name ?? 'unknown',
+        startedAt: event.time,
+        endedAt: event.time,
+        seq: event.seq,
+        result: extractText(message.content),
+        isError: message.isError === true || (event.data?.error !== undefined && event.data?.error !== null),
+        error: event.data?.error ?? (message.isError === true ? 'tool returned an error' : null),
+      });
+      continue;
+    }
+    if (event.type === 'turn/end') {
+      flush();
+    }
+  }
+  flush();
+  return stats;
+}
+
 function apiRoutes(ctx, ledger) {
   const routes = [];
 
@@ -559,6 +748,40 @@ function apiRoutes(ctx, ledger) {
       if (Array.isArray(body.tags)) ledger.setTags(body.id, body.tags);
       if (typeof body.note === 'string') ledger.setNote(body.id, body.note);
       return json({ ok: true, prompt: ledger.getPrompt(body.id) });
+    }),
+  });
+
+
+  routes.push({
+    path: PREFIX + '/sessions',
+    methods: ['GET'],
+    requestBody: 'buffered',
+    fetch: guarded(async () => json({ ok: true, sessions: ledger.sessions(30) })),
+  });
+
+  routes.push({
+    path: PREFIX + '/session-actions',
+    methods: ['GET'],
+    requestBody: 'buffered',
+    fetch: guarded(async (request) => {
+      const sessionId = new URL(request.url).searchParams.get('sessionId') ?? '';
+      if (sessionId === '') throw new HttpError(400, 'sessionId is required');
+      const data = ledger.sessionActions(sessionId);
+      if (data === null) throw new HttpError(404, 'session not found');
+      return json({ ok: true, session: data });
+    }),
+  });
+
+  routes.push({
+    path: PREFIX + '/actions/backfill',
+    methods: ['POST'],
+    requestBody: 'buffered',
+    fetch: guarded(async (request) => {
+      const body = await readJson(request);
+      if (typeof body.sessionId !== 'string' || body.sessionId === '') throw new HttpError(400, 'sessionId is required');
+      const stats = backfillSessionActions(ctx, ledger, body.sessionId);
+      if (stats === null) throw new HttpError(404, 'session not found');
+      return json({ ok: true, ...stats, session: ledger.sessionActions(body.sessionId) });
     }),
   });
 
