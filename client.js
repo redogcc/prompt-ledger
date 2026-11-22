@@ -404,6 +404,21 @@ window.__ModuleLoader__.load({
       'result.modelNote': '模型交付说明',
       'result.completed': '完成事项',
       'result.basedOnNote': '来自模型交付说明',
+      'result.noDirectFiles': '未直接映射到文件',
+      'result.preview': '预览',
+      'result.open': '打开',
+      'preview.title': '预览产出物',
+      'preview.open': '用默认应用打开',
+      'preview.reveal': '在 Finder 中显示',
+      'preview.copy': '复制路径',
+      'preview.copied': '已复制',
+      'preview.close': '关闭',
+      'preview.loading': '正在加载预览…',
+      'preview.unsupported': '这类文件暂不支持内嵌预览，可以直接打开。',
+      'preview.tooLarge': '文件较大，已跳过内嵌预览，请用默认应用打开。',
+      'preview.error': '预览失败：{message}',
+
+
 
       'result.files': '{count} 个文件',
       'result.noChanges': '本轮没有文件改动',
@@ -803,6 +818,21 @@ window.__ModuleLoader__.load({
       'result.modelNote': 'Model delivery note',
       'result.completed': 'Completed',
       'result.basedOnNote': 'from the model delivery note',
+      'result.noDirectFiles': 'No direct file mapping',
+      'result.preview': 'Preview',
+      'result.open': 'Open',
+      'preview.title': 'Preview output',
+      'preview.open': 'Open in default app',
+      'preview.reveal': 'Show in Finder',
+      'preview.copy': 'Copy path',
+      'preview.copied': 'Copied',
+      'preview.close': 'Close',
+      'preview.loading': 'Loading preview…',
+      'preview.unsupported': 'Inline preview is not available for this file type; open it directly.',
+      'preview.tooLarge': 'The file is too large for inline preview; use the default app instead.',
+      'preview.error': 'Preview failed: {message}',
+
+
 
       'result.files': '{count} file(s)',
       'result.noChanges': 'No file changes this turn',
@@ -2126,7 +2156,7 @@ window.__ModuleLoader__.load({
           title = title.split(String.fromCharCode(96)).join('');
           if (title.length > 56) title = title.slice(0, 55) + '…';
           const skip = /^(下一步|后续|总结|结论|说明|附|附录|风险|参考|背景)/.test(title);
-          current = skip || title === '' ? null : { title, detail: '' };
+          current = skip || title === '' ? null : { title, detail: '', searchText: '' };
           if (current !== null) items.push(current);
           continue;
         }
@@ -2139,10 +2169,51 @@ window.__ModuleLoader__.load({
           .replace(/[*]/g, '')
           .trim();
         const plain = cleaned.split(String.fromCharCode(96)).join('');
+        if (plain !== '') current.searchText = (current.searchText + ' ' + plain).slice(0, 800);
         if (plain !== '' && current.detail === '') current.detail = plain.length > 110 ? plain.slice(0, 109) + '…' : plain;
         if (items.length >= 4) break;
       }
       return items.filter((item) => item.title !== '').slice(0, 4);
+    }
+
+    function extractFileCandidates(text) {
+      const input = String(text ?? '');
+      const found = new Set();
+      const add = (value) => {
+        let candidate = String(value ?? '').trim();
+        if (candidate === '' || candidate.startsWith('http://') || candidate.startsWith('https://')) return;
+        candidate = candidate.replace(/^['"]+|['"]+$/g, '').replace(/^\.\//, '').replace(/^\/+/, '').split('#')[0].split('?')[0];
+        if (candidate === '' || candidate.includes(' ')) return;
+        if (!candidate.includes('/') && !/[.]/.test(candidate)) return;
+        found.add(candidate);
+      };
+      let match;
+      const linkPattern = /\]\(([^)]+)\)/g;
+      while ((match = linkPattern.exec(input)) !== null) add(match[1]);
+      const filePattern = /[A-Za-z0-9_@./-]+\.(?:md|markdown|json|jsonl|js|mjs|cjs|ts|tsx|jsx|html|css|scss|py|go|rs|java|sh|yml|yaml|toml|txt|csv|png|jpe?g|webp|gif|svg|mp4|mov|webm|pdf)/gi;
+      while ((match = filePattern.exec(input)) !== null) add(match[0]);
+      const dirPattern = /(?:^|[^\w/])((?:docs|src|test|tests|app|apps|packages|agent-ops-product|prompt-ledger|prompt-ledger-promo|demo|scripts|assets)\/[A-Za-z0-9_@./-]+)/g;
+      while ((match = dirPattern.exec(input)) !== null) add(match[1]);
+      return [...found];
+    }
+
+    function attachEvidence(items, files) {
+      const pool = Array.isArray(files) ? files : [];
+      return items.map((item) => {
+        const candidates = extractFileCandidates(item.title + ' ' + item.detail + ' ' + (item.searchText ?? ''));
+        const matched = new Map();
+        for (const candidate of candidates) {
+          const lower = candidate.toLowerCase();
+          for (const file of pool) {
+            const path = String(file.path ?? '').replace(/\\/g, '/').toLowerCase();
+            const label = String(file.label ?? '').replace(/\\/g, '/').toLowerCase();
+            if (path === lower || path.endsWith('/' + lower) || label === lower || label.endsWith('/' + lower) || label.includes(lower)) {
+              matched.set(file.path, file);
+            }
+          }
+        }
+        return { ...item, files: [...matched.values()].slice(0, 4) };
+      });
     }
 
     function buildOutcome(actions, response, zh, scope = 'turn') {
@@ -2225,6 +2296,22 @@ window.__ModuleLoader__.load({
         group.top.push(file);
         groupsMap.set(name, group);
       }
+      const filePool = new Map();
+      for (const file of deliverList) {
+        filePool.set(file.path, { ...file, type: file.key, added: 0, removed: 0, action: 'deliver' });
+      }
+      for (const file of changeList) {
+        const previous = filePool.get(file.path) ?? {};
+        filePool.set(file.path, {
+          ...previous,
+          ...file,
+          type: fileTypeInfo(file.path, zh).key,
+          action: file.writes > 0 ? 'write' : 'edit',
+          explicit: previous.explicit === true,
+        });
+      }
+      const items = attachEvidence(extractResultItems(response, zh), [...filePool.values()]);
+
       const groups = [...groupsMap.values()].map((group) => ({
         ...group,
         top: group.top.sort((a, b) => (b.added + b.removed) - (a.added + a.removed)).slice(0, 3),
@@ -2255,7 +2342,7 @@ window.__ModuleLoader__.load({
         headline,
         sentence,
         narrative: resultNarrative(response),
-        items: extractResultItems(response, zh),
+        items,
       };
     }
 
@@ -2439,10 +2526,110 @@ window.__ModuleLoader__.load({
           : null);
     }
 
+    function previewKind(filePath) {
+      const ext = String(filePath ?? '').split('.').pop().toLowerCase();
+      if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext)) return 'image';
+      if (['mp4', 'mov', 'webm', 'm4v'].includes(ext)) return 'video';
+      if (ext === 'pdf') return 'pdf';
+      if (['md', 'markdown', 'txt', 'json', 'jsonl', 'js', 'mjs', 'cjs', 'ts', 'tsx', 'jsx', 'html', 'css', 'scss', 'py', 'go', 'rs', 'java', 'sh', 'yml', 'yaml', 'toml', 'csv'].includes(ext)) return 'text';
+      return 'other';
+    }
+
+    function OutputPreview({ promptId, file, t, zh, onClose }) {
+      const kind = previewKind(file.path);
+      const [state, setState] = useState({ loading: kind !== 'other', url: null, text: null, error: null });
+      const [copied, setCopied] = useState(false);
+      useEffect(() => {
+        if (kind === 'other') {
+          setState({ loading: false, url: null, text: null, error: null });
+          return undefined;
+        }
+        let cancelled = false;
+        let objectUrl = null;
+        setState({ loading: true, url: null, text: null, error: null });
+        const endpoint = '/api/prompt-ledger/asset?promptId=' + encodeURIComponent(promptId) + '&path=' + encodeURIComponent(file.path);
+        fetch(endpoint, { cache: 'no-store' })
+          .then(async (response) => {
+            if (!response.ok) throw new Error(response.status === 413 ? t('preview.tooLarge') : 'HTTP ' + response.status);
+            if (kind === 'text') {
+              const text = await response.text();
+              if (!cancelled) setState({ loading: false, url: null, text, error: null });
+              return;
+            }
+            const blob = await response.blob();
+            objectUrl = URL.createObjectURL(blob);
+            if (!cancelled) setState({ loading: false, url: objectUrl, text: null, error: null });
+          })
+          .catch((error) => {
+            if (!cancelled) setState({ loading: false, url: null, text: null, error: error.message });
+          });
+        return () => {
+          cancelled = true;
+          if (objectUrl !== null) URL.revokeObjectURL(objectUrl);
+        };
+      }, [file.path, kind, promptId]);
+
+      useEffect(() => {
+        const onKey = (event) => { if (event.key === 'Escape') onClose(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+      }, [onClose]);
+
+      const open = async (mode) => {
+        try {
+          await requestJson('/api/prompt-ledger/asset/open', {
+            method: 'POST',
+            body: JSON.stringify({ promptId, path: file.path, mode }),
+          });
+        } catch (error) {
+          setState((current) => ({ ...current, error: error.message }));
+        }
+      };
+      const copy = async () => {
+        try {
+          await navigator.clipboard.writeText(file.path);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1600);
+        } catch {
+          /* clipboard unavailable */
+        }
+      };
+
+      const body = state.loading
+        ? h('div', { className: 'pl-preview-empty' }, t('preview.loading'))
+        : state.error !== null
+          ? h('div', { className: 'pl-preview-empty is-error' }, interpolate(t('preview.error'), { message: state.error }))
+          : kind === 'image' && state.url !== null
+            ? h('img', { className: 'pl-preview-image', src: state.url, alt: file.label })
+            : kind === 'video' && state.url !== null
+              ? h('video', { className: 'pl-preview-video', src: state.url, controls: true, autoPlay: true })
+              : kind === 'pdf' && state.url !== null
+                ? h('iframe', { className: 'pl-preview-pdf', src: state.url, title: file.label })
+                : kind === 'text' && state.text !== null
+                  ? h('pre', { className: 'pl-preview-text' }, state.text)
+                  : h('div', { className: 'pl-preview-empty' }, t('preview.unsupported'));
+
+      return h('div', { className: 'pl-preview-overlay', role: 'presentation', onClick: onClose },
+        h('div', { className: 'pl-preview', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('preview.title'), onClick: (event) => event.stopPropagation() },
+          h('div', { className: 'pl-preview-head' },
+            h('div', { className: 'pl-preview-title-wrap' },
+              h('span', { className: 'pl-preview-eyebrow' }, t('preview.title')),
+              h('h3', null, file.label || file.path)),
+            h('button', { type: 'button', className: 'pl-iconbtn', onClick: onClose, 'aria-label': t('preview.close') }, h(CloseIcon))),
+          h('div', { className: 'pl-preview-body' }, body),
+          h('div', { className: 'pl-preview-foot' },
+            h('code', { className: 'pl-preview-path', title: file.path }, file.path),
+            h('div', { className: 'pl-preview-actions' },
+              h('button', { type: 'button', className: 'pl-btn', onClick: () => open('open') }, t('preview.open')),
+              h('button', { type: 'button', className: 'pl-btn', onClick: () => open('reveal') }, t('preview.reveal')),
+              h('button', { type: 'button', className: 'pl-btn', onClick: copy }, copied ? t('preview.copied') : t('preview.copy'))))));
+    }
+
     function ResultCard({ prompt, t, zh }) {
       const [showProcess, setShowProcess] = useState(false);
+      const [previewFile, setPreviewFile] = useState(null);
       const actions = Array.isArray(prompt.actions) ? prompt.actions : [];
-      useEffect(() => { setShowProcess(false); }, [prompt.id]);
+      useEffect(() => { setShowProcess(false); setPreviewFile(null); }, [prompt.id]);
       const outcome = buildOutcome(actions, prompt.response, zh);
       if (actions.length === 0 && !outcome.narrative) return null;
       const phases = [
@@ -2455,7 +2642,15 @@ window.__ModuleLoader__.load({
         h('b', null, value),
         h('span', null, label));
       const visibleDeliverables = outcome.deliverables.slice(0, 6);
-      const deliverableCards = visibleDeliverables.map((item) => h('div', { className: 'pl-result-deliverable is-' + item.key, key: item.path },
+      const deliverableCards = visibleDeliverables.map((item) => h('div', {
+        className: 'pl-result-deliverable is-' + item.key,
+        key: item.path,
+        role: 'button',
+        tabIndex: 0,
+        title: t('result.preview'),
+        onClick: () => setPreviewFile(item),
+        onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setPreviewFile(item); } },
+      },
         h('div', { className: 'pl-result-deliverable-icon' }, h(ActionIcon, { kind: item.icon, size: 18 })),
         h('div', { className: 'pl-result-deliverable-copy' },
           h('b', { title: item.path }, item.label),
@@ -2472,6 +2667,23 @@ window.__ModuleLoader__.load({
         h('div', { className: 'pl-result-change-stats' },
           group.added > 0 ? h('span', { className: 'is-add' }, '+' + group.added) : null,
           group.removed > 0 ? h('span', { className: 'is-del' }, '−' + group.removed) : null)));
+      const itemRows = outcome.items.map((item) => {
+        const files = item.files.length > 0
+          ? h('div', { className: 'pl-result-item-files' }, item.files.map((file) => h('button', {
+            type: 'button',
+            className: 'pl-result-item-file',
+            key: file.path,
+            title: t('result.preview'),
+            onClick: () => setPreviewFile(file),
+          }, h('span', null, file.label), file.added > 0 ? h('b', { className: 'is-add' }, '+' + file.added) : null, file.removed > 0 ? h('b', { className: 'is-del' }, '−' + file.removed) : null)))
+          : (outcome.changes.length > 0 ? h('span', { className: 'pl-result-item-nofiles' }, t('result.noDirectFiles')) : null);
+        return h('div', { className: 'pl-result-item', key: item.title },
+          h('span', { className: 'pl-result-item-check' }, h(CheckIcon, { size: 11 })),
+          h('div', { className: 'pl-result-item-copy' },
+            h('b', null, item.title),
+            item.detail ? h('span', null, item.detail) : null,
+            files));
+      });
       const checkRows = outcome.verifications.map((check) => h('div', { className: 'pl-result-check is-' + check.status, key: check.label },
         check.status === 'error' ? h(CloseIcon, { size: 12 }) : h(CheckIcon, { size: 12 }),
         h('span', null, check.label)));
@@ -2491,11 +2703,7 @@ window.__ModuleLoader__.load({
         outcome.items.length > 0
           ? h('div', { className: 'pl-result-section is-items' },
             h('h4', null, t('result.completed'), h('span', { className: 'pl-result-section-note' }, t('result.basedOnNote'))),
-            h('div', { className: 'pl-result-items' }, outcome.items.map((item) => h('div', { className: 'pl-result-item', key: item.title },
-              h('span', { className: 'pl-result-item-check' }, h(CheckIcon, { size: 11 })),
-              h('div', { className: 'pl-result-item-copy' },
-                h('b', null, item.title),
-                item.detail ? h('span', null, item.detail) : null)))))
+            h('div', { className: 'pl-result-items' }, itemRows))
           : null,
         outcome.deliverables.length > 0
           ? h('div', { className: 'pl-result-section' },
@@ -2521,7 +2729,8 @@ window.__ModuleLoader__.load({
               onClick: () => setShowProcess((value) => !value),
             }, showProcess ? t('result.closeProcess') : t('result.openProcess'), h(ChevronIcon, { open: showProcess }))
             : null),
-        showProcess ? h('div', { className: 'pl-result-process' }, h(ActionTrace, { prompt, t, zh, compact: true })) : null);
+        showProcess ? h('div', { className: 'pl-result-process' }, h(ActionTrace, { prompt, t, zh, compact: true })) : null,
+        previewFile !== null ? h(OutputPreview, { promptId: prompt.id, file: previewFile, t, zh, onClose: () => setPreviewFile(null) }) : null);
     }
 
     function PromptDetail({ prompt, t, zh, bootstrap, onClose, onRate, onSaveNote, onSaveTags, onToggleFavorite, onRetry }) {
@@ -4326,6 +4535,40 @@ window.__ModuleLoader__.load({
 .pl-result-item-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
 .pl-result-item-copy b{font-size:11px;font-weight:600;line-height:1.4;color:var(--dsw-alias-label-primary)}
 .pl-result-item-copy span{font-size:9.5px;line-height:1.55;color:var(--dsw-alias-label-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-result-deliverable[role="button"]{cursor:pointer;transition:border-color .15s,background .15s}
+.pl-result-deliverable[role="button"]:hover{border-color:var(--dsw-alias-border-l2);background:var(--dsw-alias-interactive-bg-hover)}
+.pl-result-deliverable[role="button"]:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:2px}
+.pl-result-item-files{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.pl-result-item-file{appearance:none;display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:2px 6px;border:1px solid var(--dsw-alias-border-l1);border-radius:5px;background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-secondary);font:inherit;font-size:8.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-result-item-file:hover{border-color:var(--dsw-alias-brand-primary);color:var(--dsw-alias-brand-primary)}
+.pl-result-item-file span{overflow:hidden;text-overflow:ellipsis}
+.pl-result-item-file b{font-family:"SF Mono",Menlo,monospace;font-size:8px;font-weight:400}
+.pl-result-item-file .is-add{color:var(--dsw-alias-state-success-primary)}
+.pl-result-item-file .is-del{color:var(--dsw-alias-state-error-primary)}
+.pl-result-item-nofiles{display:block;margin-top:3px;font-size:8.5px;color:var(--dsw-alias-label-tertiary)}
+.pl-preview-overlay{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,14,13,.55);backdrop-filter:blur(4px)}
+.pl-preview{width:min(920px,94vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--dsw-alias-border-l1);border-radius:16px;background:var(--dsw-alias-bg-overlay);color:var(--dsw-alias-label-primary);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.pl-preview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--dsw-alias-border-l1)}
+.pl-preview-title-wrap{min-width:0}
+.pl-preview-eyebrow{font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--dsw-alias-label-secondary)}
+.pl-preview-title-wrap h3{margin:3px 0 0;font-size:14px;font-weight:600;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-preview-body{flex:1;min-height:260px;max-height:64vh;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto;background:color-mix(in srgb,var(--dsw-alias-bg-base) 55%,transparent)}
+.pl-preview-image{max-width:100%;max-height:62vh;object-fit:contain;border-radius:4px}
+.pl-preview-video{max-width:100%;max-height:62vh;border-radius:4px;background:#000}
+.pl-preview-pdf{width:100%;height:62vh;border:0;border-radius:4px;background:#fff}
+.pl-preview-text{width:100%;max-height:62vh;margin:0;padding:14px;overflow:auto;border:1px solid var(--dsw-alias-border-l1);border-radius:8px;background:var(--dsw-alias-bg-base);font-family:"SF Mono",Menlo,monospace;font-size:10px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.pl-preview-empty{font-size:11px;line-height:1.6;color:var(--dsw-alias-label-secondary);text-align:center}
+.pl-preview-empty.is-error{color:var(--dsw-alias-state-error-primary)}
+.pl-preview-foot{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-layer-1)}
+.pl-preview-path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:"SF Mono",Menlo,monospace;font-size:8.5px;color:var(--dsw-alias-label-tertiary)}
+.pl-preview-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width: 680px){
+  .pl-preview-overlay{padding:10px}
+  .pl-preview{width:100%;max-height:96vh}
+  .pl-preview-foot{align-items:flex-start;flex-direction:column}
+  .pl-preview-actions{width:100%;justify-content:flex-start}
+  .pl-preview-path{width:100%}
+}
 .pl-result-deliverables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .pl-result-deliverable{display:flex;align-items:center;gap:10px;min-width:0;padding:10px;border:1px solid var(--dsw-alias-border-l1);border-radius:12px;background:var(--dsw-alias-bg-layer-1)}
 .pl-result-deliverable-icon{width:38px;height:38px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary)}

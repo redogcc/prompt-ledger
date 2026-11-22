@@ -7,6 +7,9 @@
  * by the MCP/CLI adapters for ChatGPT, Codex, Work Buddy, Doubao and TRAE.
  */
 
+import { execFileSync } from 'node:child_process';
+import { readFileSync, statSync } from 'node:fs';
+import { basename, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -24,6 +27,46 @@ const EXTERNAL_PATH = '/prompt-ledger/v1/ingest';
 const EXTERNAL_HEALTH_PATH = '/prompt-ledger/v1/health';
 const MAX_BODY = 2_000_000;
 const PLUGIN_DIR = fileURLToPath(new URL('./', import.meta.url));
+const ASSET_MAX_BYTES = 64 * 1024 * 1024;
+const ASSET_TYPES = {
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.svg': 'image/svg+xml',
+  '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.webm': 'video/webm', '.m4v': 'video/x-m4v',
+  '.pdf': 'application/pdf',
+  '.md': 'text/markdown; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.json': 'application/json; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.ts': 'text/plain; charset=utf-8',
+  '.tsx': 'text/plain; charset=utf-8', '.jsx': 'text/plain; charset=utf-8', '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8', '.csv': 'text/csv; charset=utf-8', '.yml': 'text/yaml; charset=utf-8', '.yaml': 'text/yaml; charset=utf-8',
+  '.py': 'text/x-python; charset=utf-8', '.sh': 'text/x-shellscript; charset=utf-8',
+};
+
+function assetMime(filePath) {
+  return ASSET_TYPES[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
+}
+
+function resolveAsset(ledger, promptId, filePath, options = {}) {
+  if (typeof promptId !== 'string' || promptId === '' || typeof filePath !== 'string' || filePath === '') {
+    throw new HttpError(400, 'promptId and path are required');
+  }
+  const target = ledger.resolveActionTarget(promptId, filePath);
+  if (target === null) throw new HttpError(403, 'file is not a captured target of this prompt');
+  let stat;
+  try {
+    stat = statSync(target.path);
+  } catch {
+    throw new HttpError(404, 'file no longer exists');
+  }
+  if (!stat.isFile()) throw new HttpError(400, 'target is not a regular file');
+  if (options.sizeLimit !== false && stat.size > ASSET_MAX_BYTES) throw new HttpError(413, 'file is too large for inline preview');
+  return { target, stat };
+}
+
+function openLocalFile(filePath, reveal) {
+  const platform = process.platform;
+  const command = platform === 'darwin' ? 'open' : platform === 'win32' ? 'explorer.exe' : 'xdg-open';
+  const args = platform === 'darwin' && reveal ? ['-R', filePath] : [filePath];
+  execFileSync(command, args, { stdio: 'ignore', timeout: 5000 });
+}
+
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -782,6 +825,46 @@ function apiRoutes(ctx, ledger) {
       const stats = backfillSessionActions(ctx, ledger, body.sessionId);
       if (stats === null) throw new HttpError(404, 'session not found');
       return json({ ok: true, ...stats, session: ledger.sessionActions(body.sessionId) });
+    }),
+  });
+
+
+  routes.push({
+    path: PREFIX + '/asset',
+    methods: ['GET'],
+    requestBody: 'buffered',
+    fetch: guarded(async (request) => {
+      const url = new URL(request.url);
+      const promptId = url.searchParams.get('promptId') ?? '';
+      const filePath = url.searchParams.get('path') ?? '';
+      const { target, stat } = resolveAsset(ledger, promptId, filePath);
+      const body = readFileSync(target.path);
+      const filename = basename(target.path).replace(/[^\w.\-]+/g, '_');
+      return new Response(body, {
+        status: 200,
+        headers: {
+          'content-type': assetMime(target.path),
+          'content-length': String(stat.size),
+          'content-disposition': "inline; filename*=UTF-8''" + encodeURIComponent(filename),
+          'cache-control': 'no-store',
+        },
+      });
+    }),
+  });
+
+  routes.push({
+    path: PREFIX + '/asset/open',
+    methods: ['POST'],
+    requestBody: 'buffered',
+    fetch: guarded(async (request) => {
+      const body = await readJson(request);
+      const { target } = resolveAsset(ledger, body.promptId, body.path, { sizeLimit: false });
+      try {
+        openLocalFile(target.path, body.mode === 'reveal');
+      } catch (error) {
+        throw new HttpError(500, error instanceof Error ? error.message : 'could not open file');
+      }
+      return json({ ok: true, path: target.path });
     }),
   });
 

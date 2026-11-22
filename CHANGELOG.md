@@ -4,6 +4,18 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-11-22
+
+### Added
+
+- Output preview: image, video, PDF and text/code files can be previewed inside the panel; users can also open with the default app, reveal in Finder, or copy the path.
+- Secure asset routes: only exact action targets already captured for the prompt can be read/opened; inline preview is capped at 64 MB, with a direct-open fallback for larger files.
+- Evidence mapping for completed items: file links and path references in the model delivery note are matched to changed/output files, shown as clickable file chips under each item; unmatched items are explicitly marked as having no direct file mapping.
+
+### Changed
+
+- Completed items now connect semantic results to concrete files instead of leaving both as separate sections.
+
 ## [1.1.0] — 2026-11-22
 
 ### Added

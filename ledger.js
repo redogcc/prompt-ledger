@@ -19,7 +19,7 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, dirname, isAbsolute, join, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
 import { aggregateFiles, describeAction, redactSecrets, summarizeActions } from './actions.js';
@@ -1843,6 +1843,37 @@ export class Ledger {
       }
     });
     return result;
+  }
+
+  /**
+   * Resolve a UI-visible file target back to an action for this prompt.
+   * Only exact targets already captured in action_events are readable/openable;
+   * the panel can never ask the Host to serve an arbitrary local path.
+   */
+  resolveActionTarget(promptId, filePath) {
+    const prompt = this.#promptRow(promptId);
+    if (prompt === undefined || typeof filePath !== 'string' || filePath === '') return null;
+    const wanted = isAbsolute(filePath) ? filePath : resolve(prompt.cwd ?? '', filePath);
+    const rows = this.#db.prepare(
+      "SELECT call_id, kind, title_zh, targets_json FROM action_events WHERE prompt_id = ? AND hidden = 0 ORDER BY id ASC"
+    ).all(promptId);
+    for (const row of rows) {
+      for (const target of parseJson(row.targets_json, [])) {
+        if (target === null || typeof target.path !== 'string') continue;
+        const absolute = isAbsolute(target.path) ? target.path : resolve(prompt.cwd ?? '', target.path);
+        if (absolute === wanted) {
+          return {
+            path: absolute,
+            label: target.label || basename(absolute),
+            action: target.action ?? row.kind,
+            cwd: prompt.cwd ?? '',
+            callId: row.call_id,
+            title: row.title_zh,
+          };
+        }
+      }
+    }
+    return null;
   }
 
   sessions(limit = 20) {

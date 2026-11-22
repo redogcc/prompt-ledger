@@ -225,6 +225,8 @@ test('captures a plain-language action trace and aggregates files', (t) => {
   assert.equal(prompt.actionSummary.errors, 1);
   assert.equal(prompt.files[0].action, 'edit');
   assert.equal(prompt.files[0].count, 2);
+  assert.equal(ledger.resolveActionTarget(id, '/repo/src/app.js')?.path, '/repo/src/app.js');
+  assert.equal(ledger.resolveActionTarget(id, '/repo/src/other.js'), null);
   assert.ok(prompt.events.some((event) => event.kind === 'action.call'));
   assert.equal(ledger.integrity().ok, true);
 });
